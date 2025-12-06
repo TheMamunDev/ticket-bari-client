@@ -13,7 +13,6 @@ import {
 } from 'react-icons/fa';
 
 const TicketCard = ({ ticket }) => {
-  // Helper: Get Icon & Color based on Transport Type
   const getTransportStyle = type => {
     switch (type.toLowerCase()) {
       case 'bus':
@@ -53,7 +52,6 @@ const TicketCard = ({ ticket }) => {
       </figure>
 
       <div className="card-body p-5 flex flex-col flex-grow">
-        {/* Title & Price */}
         <div className="flex justify-between items-start mb-1">
           <h2
             className="card-title text-lg font-bold text-base-content line-clamp-1 w-2/3"
@@ -68,14 +66,12 @@ const TicketCard = ({ ticket }) => {
           </div>
         </div>
 
-        {/* Route Info */}
         <div className="text-sm text-base-content/70 mb-2 flex items-center gap-2">
           <span className="font-semibold">{ticket.from}</span>
           <span className="text-primary text-xs">●─────●</span>
           <span className="font-semibold">{ticket.to}</span>
         </div>
 
-        {/* Date & Time Section (New Requirement) */}
         <div className="flex gap-4 text-xs text-base-content/80 bg-base-200 p-2 rounded-lg mb-3">
           <div className="flex items-center gap-1">
             <FaCalendarAlt className="text-primary" />
@@ -87,7 +83,6 @@ const TicketCard = ({ ticket }) => {
           </div>
         </div>
 
-        {/* Perks List */}
         <div className="flex flex-wrap gap-2 mb-4">
           {ticket.perks.slice(0, 3).map((perk, index) => (
             <div
@@ -106,7 +101,6 @@ const TicketCard = ({ ticket }) => {
           )}
         </div>
 
-        {/* Push Button to Bottom */}
         <div className="mt-auto">
           <Link
             to={`/ticket/${ticket.id}`}

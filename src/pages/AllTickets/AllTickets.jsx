@@ -13,7 +13,7 @@ const AllTickets = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  console.log(tickets);
+  // console.log(tickets);
 
   const handleSearch = e => {
     const term = e.target.value.toLowerCase();
@@ -64,7 +64,6 @@ const AllTickets = () => {
             ))}
           </div>
         ) : (
-          // Empty State
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🎫</div>
             <h3 className="text-2xl font-bold text-base-content">

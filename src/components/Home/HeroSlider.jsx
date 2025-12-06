@@ -89,7 +89,6 @@ const HeroSlider = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent md:bg-gradient-to-r md:from-black/80 md:via-black/50 md:to-transparent">
                 <div className="relative z-10 h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center md:justify-start text-center md:text-left">
                   <div className="max-w-2xl text-white mt-10 md:mt-0">
-                    {/* Subtitle */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
@@ -106,7 +105,6 @@ const HeroSlider = () => {
                       </h3>
                     </motion.div>
 
-                    {/* Title: Scaled down for mobile */}
                     <motion.h1
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
@@ -120,7 +118,6 @@ const HeroSlider = () => {
                       </span>
                     </motion.h1>
 
-                    {/* Description: Smaller text on mobile */}
                     <motion.p
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}
@@ -130,7 +127,6 @@ const HeroSlider = () => {
                       {slide.description}
                     </motion.p>
 
-                    {/* Button */}
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       whileInView={{ opacity: 1, scale: 1 }}

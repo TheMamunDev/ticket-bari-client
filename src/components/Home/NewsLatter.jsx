@@ -6,12 +6,10 @@ const Newsletter = () => {
     <section className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative bg-primary rounded-3xl overflow-hidden shadow-2xl">
-          {/* Decorative Circles Background */}
           <div className="absolute top-0 left-0 w-64 h-64 bg-white opacity-10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-black opacity-10 rounded-full translate-x-1/3 translate-y-1/3"></div>
 
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-8 md:p-16 gap-8 text-center md:text-left">
-            {/* Text Content */}
             <div className="md:w-1/2 text-primary-content">
               <div className="badge badge-accent badge-lg border-none text-white font-bold mb-4 gap-2">
                 <FaTicketAlt /> Limited Offer
@@ -25,7 +23,6 @@ const Newsletter = () => {
               </p>
             </div>
 
-            {/* Form Section */}
             <div className="w-full md:w-5/12">
               <form className="card bg-base-100 shadow-xl border border-base-200">
                 <div className="card-body p-6">
