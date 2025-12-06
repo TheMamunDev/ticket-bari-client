@@ -11,7 +11,7 @@ const Root = () => {
       <div className="sticky top-0 z-50">
         <Navbar />
       </div>
-      <main className="flex-grow min-h-[calc(100vh-300px)] max-w-7xl mx-auto">
+      <main className="min-h-[calc(100vh-300px)] max-w-7xl mx-auto">
         <Outlet />
       </main>
       <Footer />
