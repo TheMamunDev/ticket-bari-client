@@ -7,13 +7,8 @@ export default function Home() {
       <section className="max-w-4xl mx-auto">
         <div data-aos="fade-up" className="text-center">
           <h1 className="text-4xl font-bold mb-2 flex items-center justify-center gap-2">
-            <FaReact /> React Ready Starter Package
+            <FaReact /> Well come to ticket bari
           </h1>
-          <p className="text-muted-foreground">
-            A Vite + Tailwind + DaisyUI starter with Auth, AOS, Toasts, React
-            Query, Axios and more.
-          </p>
-          <p className="text-muted-foreground mt-6">Created by Mahmud Hasan</p>
         </div>
       </section>
     </div>
