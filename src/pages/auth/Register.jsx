@@ -1,9 +1,10 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useAuth from '@/hooks/useAuth';
+import SocialLogin from './SocialLogin';
 
 const schema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -83,6 +84,13 @@ const Register = () => {
           Create account
         </button>
       </form>
+      <SocialLogin></SocialLogin>
+      <p className="mt-2">
+        Already have an account?{' '}
+        <Link to="/login" className="link">
+          Login here
+        </Link>
+      </p>
     </div>
   );
 };

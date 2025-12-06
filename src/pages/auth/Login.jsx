@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useAuth from '@/hooks/useAuth';
 import { useForm } from 'react-hook-form';
+import SocialLogin from './SocialLogin';
 
 export default function Login() {
   const { handleGoogleLogin, user, login } = useAuth();
@@ -34,17 +35,6 @@ export default function Login() {
     }
   };
 
-  const handleGoogle = async () => {
-    try {
-      await handleGoogleLogin();
-      toast.success('Logged in with Google');
-      navigate('/');
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message || 'Google login failed');
-    }
-  };
-
   return (
     <div className="max-w-md mx-auto p-8">
       <h2 className="text-2xl font-bold mb-4">Login</h2>
@@ -66,12 +56,7 @@ export default function Login() {
           Login
         </button>
       </form>
-
-      <div className="divider">OR</div>
-
-      <button className="btn btn-outline w-full" onClick={handleGoogle}>
-        Continue with Google
-      </button>
+      <SocialLogin></SocialLogin>
 
       <p className="mt-4">
         <Link to="/forgot" className="link">
