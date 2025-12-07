@@ -5,16 +5,33 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useAuth from '@/hooks/useAuth';
 import SocialLogin from './SocialLogin';
+import axios from 'axios';
+import { handleFirebaseError } from '@/lib/utils/firebaseErrorHandle';
 
+const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+];
+const MAX_FILE_SIZE = 5000000;
 const schema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email(),
   password: z.string().min(6, 'Password Min Length is 6 Character'),
-  photoURL: z.string().url(),
+  photoURL: z
+    .any()
+    .transform(fileList => fileList?.[0])
+    .refine(file => file?.size <= MAX_FILE_SIZE, 'Max image size is 5MB.')
+    .refine(
+      file => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+      'Only .jpg, .jpeg, .png and .webp formats are supported.'
+    ),
 });
 
 const Register = () => {
   const { signUp, updateUserProfile } = useAuth();
+  const apiUrl = `${import.meta.env.VITE_BASE_URL}`;
   const {
     register,
     handleSubmit,
@@ -26,18 +43,49 @@ const Register = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
 
+  const uploadToImgbb = async file => {
+    const apiKey = import.meta.env.VITE_IMGBB_KEY;
+
+    const formData = new FormData();
+    formData.append('image', file);
+    const result = await axios.post(
+      `https://api.imgbb.com/1/upload?key=${apiKey}`,
+      formData
+    );
+    console.log(result.data.data.display_url);
+    return result.data.data.display_url;
+  };
+
   const onSubmit = async data => {
-    console.log(data);
     try {
-      await signUp(data.email, data.password).then(res => {
-        updateUserProfile().then(res => {
+      try {
+        const photo = await uploadToImgbb(data.photoURL);
+        data.photoURL = photo;
+      } catch (err) {
+        data.photoURL =
+          'https://img.icons8.com/office/300/person-male-skin-type-4.png';
+      }
+      await signUp(data.email, data.password);
+      await updateUserProfile();
+      const existingUser = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/user/?email=${data.email}`
+      );
+      if (!existingUser.data || existingUser.data.length === 0) {
+        const result = await axios.post(`${apiUrl}/user`, {
+          ...data,
+          authType: 'credentials',
+        });
+
+        if (result.data.acknowledged) {
           toast.success('Account created');
           navigate(from, { replace: true });
-        });
-      });
+        }
+      } else {
+        toast.error('User already registered');
+      }
     } catch (err) {
-      console.error(err);
-      toast.error(err.message || 'Registration failed');
+      handleFirebaseError(err);
+      return;
     }
   };
 
@@ -71,15 +119,18 @@ const Register = () => {
         {errors.password && (
           <p className="text-red-500 text-sm">{errors.password.message}</p>
         )}
+        <label className="label">Photo </label>
         <input
-          type="url"
           {...register('photoURL')}
-          placeholder="Photo URL"
-          className="input w-full"
+          className="file-input w-full"
+          name="photoURL"
+          type="file"
+          accept="image/*"
         />
         {errors.photoURL && (
-          <p className="text-red-500 text-sm">{errors.photoURL.message}</p>
+          <p className="text-red-400">{errors.photoURL.message}</p>
         )}
+        <div></div>
         <button className="btn btn-primary w-full" type="submit">
           Create account
         </button>

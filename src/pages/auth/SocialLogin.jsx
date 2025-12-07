@@ -1,18 +1,40 @@
 import useAuth from '@/hooks/useAuth';
+import axios from 'axios';
 import React from 'react';
 import { FaGoogle } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const SocialLogin = () => {
   const { handleGoogleLogin } = useAuth();
   const navigate = useNavigate();
+  const apiUrl = `${import.meta.env.VITE_BASE_URL}`;
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
 
   const handleGoogleSignIn = async () => {
     try {
-      await handleGoogleLogin();
-      toast.success('Logged in with Google');
-      navigate('/');
+      const userLogged = await handleGoogleLogin();
+      const formData = {
+        name: userLogged.user.displayName,
+        email: userLogged.user.email,
+        photo: userLogged.user.photoURL,
+        authType: 'google',
+      };
+      if (userLogged.user) {
+        const existingUser = await axios.get(
+          `${apiUrl}/user?email=${formData.email}`
+        );
+        if (!existingUser.data) {
+          const result = await axios.post(`${apiUrl}/user`, formData);
+          if (result.data.acknowledged) {
+            console.log('data', result);
+            navigate(from, { replace: true });
+          }
+        }
+        toast.success('Welcome back!');
+        navigate(from, { replace: true });
+      }
     } catch (err) {
       console.error(err);
       toast.error(err.message || 'Google login failed');

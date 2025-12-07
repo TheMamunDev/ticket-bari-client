@@ -7,6 +7,7 @@ import { signOut } from 'firebase/auth';
 import LoadingSpinner from '../../Loader/LoadingSpinner';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
   const dashboardRoute = '/dashboard/user';
