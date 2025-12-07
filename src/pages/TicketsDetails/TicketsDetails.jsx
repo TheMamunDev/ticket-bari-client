@@ -19,29 +19,10 @@ const TicketDetails = () => {
     data: ticket,
     isLoading,
     error,
-  } = useFetch(['ticket', id], `/tickets/${id}`);
+  } = useFetch(['ticket', id], `/tickets/${id}`, true);
 
   const [isExpired, setIsExpired] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const ticdket = {
-    id: id || 101,
-    title: "Dhaka to Cox's Bazar - Green Line Luxury",
-    description:
-      'Experience the most comfortable journey with Green Line. Our buses are equipped with state-of-the-art facilities including reclining seats, personal entertainment systems, and onboard meal service. Safe, fast, and reliable.',
-    from: 'Dhaka',
-    to: "Cox's Bazar",
-    price: 1500,
-    quantity: 5,
-    transportType: 'Bus',
-    perks: ['AC', 'WiFi', 'Water', 'Blanket', 'Snacks'],
-    departureDate: '2025-12-12',
-    departureTime: '10:00 PM',
-    image:
-      'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069&auto=format&fit=crop',
-    vendorName: 'Green Line Transport',
-    vendorEmail: 'contact@greenline.com',
-  };
 
   const handleExpire = status => {
     setIsExpired(status);

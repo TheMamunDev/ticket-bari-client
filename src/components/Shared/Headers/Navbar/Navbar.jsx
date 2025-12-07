@@ -10,7 +10,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'react-toastify';
 
 const Navbar = () => {
-  const dashboardRoute = '/dashboard/user';
+  const dashboardRoute = '/dashboard';
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { user, logOut, loading } = useAuth();
@@ -46,7 +46,6 @@ const Navbar = () => {
         </NavLink>
       </li>
 
-      {/* Private Routes: Only show if user is logged in */}
       {user && (
         <>
           <li>
