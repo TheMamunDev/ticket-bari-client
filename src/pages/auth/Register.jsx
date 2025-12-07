@@ -71,8 +71,9 @@ const Register = () => {
         `${import.meta.env.VITE_BASE_URL}/user/?email=${data.email}`
       );
       if (!existingUser.data || existingUser.data.length === 0) {
+        const { password, ...safeData } = data;
         const result = await axios.post(`${apiUrl}/user`, {
-          ...data,
+          ...safeData,
           authType: 'credentials',
         });
 

@@ -103,7 +103,7 @@ const TicketCard = ({ ticket }) => {
 
         <div className="mt-auto">
           <Link
-            to={`/ticket/${ticket.id}`}
+            to={`/ticket/${ticket._id}`}
             className="btn btn-primary btn-sm w-full text-white font-bold"
           >
             See Details
