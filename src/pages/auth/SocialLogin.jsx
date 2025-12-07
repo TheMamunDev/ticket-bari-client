@@ -23,7 +23,7 @@ const SocialLogin = () => {
       };
       if (userLogged.user) {
         const existingUser = await axios.get(
-          `${apiUrl}/user?email=${formData.email}`
+          `${apiUrl}/user/${formData.email}`
         );
         if (!existingUser.data) {
           const result = await axios.post(`${apiUrl}/user`, formData);

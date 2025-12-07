@@ -23,7 +23,7 @@ const DashboardLayout = () => {
 
   // TODO: Replace with real auth data
   const user = {
-    role: 'vendor', // CHANGE THIS to 'user', 'vendor', or 'admin' to test
+    role: 'user', // CHANGE THIS to 'user', 'vendor', or 'admin' to test
     name: 'Mahmud Hasan',
     email: 'mahmud@example.com',
     photo:

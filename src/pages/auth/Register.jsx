@@ -66,7 +66,7 @@ const Register = () => {
           'https://img.icons8.com/office/300/person-male-skin-type-4.png';
       }
       await signUp(data.email, data.password);
-      await updateUserProfile();
+      await updateUserProfile(data.name, data.photoURL);
       const existingUser = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/user/?email=${data.email}`
       );

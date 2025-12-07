@@ -9,6 +9,7 @@ import ProtectedRoute from './ProtectedRoute';
 import AllTickets from '@/pages/AllTickets/AllTickets';
 import TicketDetails from '@/pages/TicketsDetails/TicketsDetails';
 import DashboardLayout from '@/layout/DashboardLayout';
+import UserProfile from '@/pages/Dashboard/User/UserProfile/UserProfile';
 export const Router = createBrowserRouter([
   {
     path: '/',
@@ -51,12 +52,16 @@ export const Router = createBrowserRouter([
   },
   {
     path: '/dashboard',
-    Component: DashboardLayout,
-    // children: [
-    //   {
-    //     path: 'user',
-    //     Component:
-    //   }
-    // ]
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout></DashboardLayout>
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: 'user/profile',
+        Component: UserProfile,
+      },
+    ],
   },
 ]);
