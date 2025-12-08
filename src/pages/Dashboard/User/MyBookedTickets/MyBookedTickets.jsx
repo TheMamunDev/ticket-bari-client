@@ -16,8 +16,6 @@ const MyBookedTickets = () => {
     error,
   } = useFetch(['my-bookings', user.email], `/bookings/${user.email}`, true);
 
-  if (isLoading || loading) return <LoadingSpinner></LoadingSpinner>;
-
   const payAmount = useMutation({
     mutationFn: async data => {
       try {
@@ -33,10 +31,14 @@ const MyBookedTickets = () => {
     },
   });
   const handlePayNow = async booking => {
+    console.log(booking);
     const newData = {
       bookingId: booking._id,
       ticketTitle: booking.ticketTitle,
       totalPrice: booking.totalPrice,
+      quantity: booking.quantity,
+      userEmail: user.email,
+      ticketId: booking.ticketId,
     };
     const result = await Swal.fire({
       title: 'Proceed to Payment?',
@@ -57,6 +59,8 @@ const MyBookedTickets = () => {
     });
     payAmount.mutate(newData);
   };
+
+  if (isLoading || loading) return <LoadingSpinner></LoadingSpinner>;
 
   return (
     <div>
