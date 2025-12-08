@@ -32,7 +32,6 @@ const TicketCard = ({ ticket }) => {
 
   return (
     <div className="card bg-base-100 shadow-xl border border-base-200 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group h-full flex flex-col">
-      {/* Image Section */}
       <figure className="relative h-48 overflow-hidden shrink-0">
         <img
           src={ticket.image}

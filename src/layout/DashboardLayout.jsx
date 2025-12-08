@@ -17,13 +17,10 @@ import {
 } from 'react-icons/fa';
 
 const DashboardLayout = () => {
-  // State to control Desktop Sidebar visibility (Collapsible)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
-
-  // TODO: Replace with real auth data
   const user = {
-    role: 'user', // CHANGE THIS to 'user', 'vendor', or 'admin' to test
+    role: 'user',
     name: 'Mahmud Hasan',
     email: 'mahmud@example.com',
     photo:

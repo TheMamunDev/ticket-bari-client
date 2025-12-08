@@ -10,6 +10,7 @@ import AllTickets from '@/pages/AllTickets/AllTickets';
 import TicketDetails from '@/pages/TicketsDetails/TicketsDetails';
 import DashboardLayout from '@/layout/DashboardLayout';
 import UserProfile from '@/pages/Dashboard/User/UserProfile/UserProfile';
+import MyBookedTickets from '@/pages/Dashboard/User/MyBookedTickets/MyBookedTickets';
 export const Router = createBrowserRouter([
   {
     path: '/',
@@ -61,6 +62,10 @@ export const Router = createBrowserRouter([
       {
         path: 'user/profile',
         Component: UserProfile,
+      },
+      {
+        path: 'user/booked-tickets',
+        Component: MyBookedTickets,
       },
     ],
   },

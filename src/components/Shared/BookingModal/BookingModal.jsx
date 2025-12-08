@@ -1,6 +1,11 @@
+import useAuth from '@/hooks/useAuth';
+import useAxios from '@/hooks/useAxios';
+import { useMutation } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 const BookingModal = ({ ticket, isOpen, onClose }) => {
   const {
@@ -10,28 +15,64 @@ const BookingModal = ({ ticket, isOpen, onClose }) => {
     formState: { errors },
     reset,
   } = useForm();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const watchQuantity = watch('quantity', 1);
   const totalPrice = watchQuantity * ticket?.price || 0;
+  const secureApi = useAxios();
 
   useEffect(() => {
     if (isOpen) reset();
   }, [isOpen, reset]);
 
+  const insertData = useMutation({
+    mutationFn: async data => {
+      console.log('data from modal', data);
+      try {
+        const res = await secureApi.post('/bookings', data);
+        return res.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    onSuccess: (data, insertedData) => {
+      if (data.insertedId) {
+        onClose();
+        toast.success('Booked Success');
+        Swal.fire({
+          title: ` Booking Success `,
+          text: 'See in my booked tickets page!',
+          icon: 'success',
+          showCancelButton: true,
+          confirmButtonColor: '#03C988',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Procced',
+          cancelButtonText: 'Add Another One',
+        }).then(result => {
+          if (result.isConfirmed) {
+            navigate('/dashboard/user/booked-tickets');
+          }
+        });
+      }
+    },
+    onError: error => {
+      console.log(error);
+    },
+  });
   const onSubmit = data => {
     const bookingData = {
-      ticketId: ticket.id,
+      ticketId: ticket._id,
       ticketTitle: ticket.title,
       quantity: parseInt(data.quantity),
+      unitPrice: ticket.price,
       totalPrice: ticket.price * parseInt(data.quantity),
       status: 'pending',
+      userEmail: user.email,
+      vendorEmail: ticket.userEmail,
       bookingDate: new Date().toISOString(),
     };
 
-    console.log('Booking Submitted to DB:', bookingData);
-    alert("Booking Successful! Check 'My Booked Tickets'.");
-    onClose();
-    navigate('/dashboard/user/booked-tickets');
+    insertData.mutate(bookingData);
   };
 
   if (!isOpen) return null;

@@ -68,7 +68,7 @@ const Register = () => {
       await signUp(data.email, data.password);
       await updateUserProfile(data.name, data.photoURL);
       const existingUser = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/user/?email=${data.email}`
+        `${import.meta.env.VITE_BASE_URL}/user/${data.email}`
       );
       if (!existingUser.data || existingUser.data.length === 0) {
         const { password, ...safeData } = data;
