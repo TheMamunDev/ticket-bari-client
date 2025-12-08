@@ -13,7 +13,6 @@ import ProfileModal from './ProfileModal';
 
 const UserProfile = () => {
   const { user, loading } = useAuth();
-  console.log(user);
   const { data, isLoading, error } = useFetch(
     ['user', user?.email],
     `/user/${user?.email}`
@@ -21,16 +20,6 @@ const UserProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (loading || isLoading) return <LoadingSpinner></LoadingSpinner>;
-  const usedr = {
-    name: 'Mahmud Hasan Mamun',
-    email: 'mahmud@example.com',
-    role: 'user',
-    phone: '+880 1234 567890',
-    address: 'Chattogram, Bangladesh',
-    photoURL:
-      'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp',
-    joinDate: 'November 2025',
-  };
 
   return (
     <div className="w-full mx-auto">

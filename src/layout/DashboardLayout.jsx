@@ -1,5 +1,11 @@
-import React, { useState } from 'react';
-import { Outlet, NavLink, Link, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import {
+  Outlet,
+  NavLink,
+  Link,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 import {
   FaBars,
   FaHome,
@@ -15,17 +21,22 @@ import {
   FaBell,
   FaSearch,
 } from 'react-icons/fa';
+import useRole from '@/hooks/useRole';
+import useAuth from '@/hooks/useAuth';
+import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
 
 const DashboardLayout = () => {
+  const { user: authUser, loading } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
-  const user = {
-    role: 'user',
-    name: 'Mahmud Hasan',
-    email: 'mahmud@example.com',
-    photo:
-      'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp',
-  };
+  const { role, roleLoading } = useRole();
+  const navigate = useNavigate();
+
+  // const user = role;
+
+  if (loading || roleLoading) {
+    return <LoadingSpinner></LoadingSpinner>;
+  }
 
   const getPageTitle = () => {
     const path = location.pathname.split('/').pop();
@@ -53,7 +64,7 @@ const DashboardLayout = () => {
       </li>
     );
 
-    if (user.role === 'user') {
+    if (role === 'user') {
       return (
         <>
           <LinkItem
@@ -69,14 +80,14 @@ const DashboardLayout = () => {
             toolTip="My Booked Tickets"
           />
           <LinkItem
-            to="/dashboard/user/transactions"
+            to="/dashboard/user/payment-history"
             icon={FaHistory}
             label="Transaction History"
             toolTip="Transaction History"
           />
         </>
       );
-    } else if (user.role === 'vendor') {
+    } else if (role === 'vendor') {
       return (
         <>
           <LinkItem
@@ -111,7 +122,7 @@ const DashboardLayout = () => {
           />
         </>
       );
-    } else if (user.role === 'admin') {
+    } else if (role === 'admin') {
       return (
         <>
           <LinkItem
@@ -192,7 +203,7 @@ const DashboardLayout = () => {
             <ul className="menu w-full grow">
               <div className="mb-4 px-2 is-drawer-close:hidden">
                 <span className="badge badge-outline badge-primary w-full py-3 uppercase font-bold tracking-widest text-xs">
-                  {user.role} Panel
+                  {role} Panel
                 </span>
               </div>
               {renderSidebarLinks()}

@@ -9,11 +9,14 @@ import ProtectedRoute from './ProtectedRoute';
 import AllTickets from '@/pages/AllTickets/AllTickets';
 import TicketDetails from '@/pages/TicketsDetails/TicketsDetails';
 import DashboardLayout from '@/layout/DashboardLayout';
-import UserProfile from '@/pages/Dashboard/User/UserProfile/UserProfile';
 import MyBookedTickets from '@/pages/Dashboard/User/MyBookedTickets/MyBookedTickets';
 import PaymentHistory from '@/pages/Dashboard/User/PaymentHistory/PaymentHistory';
 import PaymentSuccess from '@/pages/Dashboard/User/PaymentSuccess/PaymentSuccess';
 import PaymentCancel from '@/pages/Dashboard/User/PaymentCancel/PaymentCancel';
+import UserProfile from '@/pages/Dashboard/Profile/UserProfile';
+import DashboardIndex from './DashboardIndex';
+import VendorRoute from './VendorRoute';
+import AddTicket from '@/pages/Dashboard/Vendor/AddTicket/AddTicket';
 export const Router = createBrowserRouter([
   {
     path: '/',
@@ -62,14 +65,29 @@ export const Router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
+      { index: true, element: <DashboardIndex></DashboardIndex> },
+      {
+        path: 'vendor/profile',
+        element: (
+          <VendorRoute>
+            <UserProfile></UserProfile>
+          </VendorRoute>
+        ),
+      },
+      {
+        path: 'vendor/add-ticket',
+        element: (
+          <VendorRoute>
+            <AddTicket></AddTicket>
+          </VendorRoute>
+        ),
+      },
+
       {
         path: 'user/profile',
         Component: UserProfile,
       },
-      {
-        path: 'user/booked-tickets',
-        Component: MyBookedTickets,
-      },
+      { path: 'user/booked-tickets', Component: MyBookedTickets },
       {
         path: 'user/payment-history',
         Component: PaymentHistory,

@@ -64,7 +64,6 @@ const MyBookedTickets = () => {
 
   return (
     <div>
-      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-8">
         <div>
           <h2 className="text-3xl font-bold text-base-content">
@@ -79,7 +78,6 @@ const MyBookedTickets = () => {
         </div>
       </div>
 
-      {/* Grid Layout - 3 Columns */}
       {bookings.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {bookings.map(booking => (
