@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router';
 import { useMutation } from '@tanstack/react-query';
 import useAxios from '@/hooks/useAxios';
 
@@ -14,7 +14,7 @@ const PaymentSuccess = () => {
 
   const verifyPayment = useMutation({
     mutationFn: async () => {
-      const res = await axiosSecure.get(`/pay?session_id=${sessionId}`);
+      const res = await axiosSecure.patch(`/pay?session_id=${sessionId}`);
       return res.data;
     },
 

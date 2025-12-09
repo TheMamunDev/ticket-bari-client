@@ -67,8 +67,9 @@ const BookingModal = ({ ticket, isOpen, onClose }) => {
       unitPrice: ticket.price,
       totalPrice: ticket.price * parseInt(data.quantity),
       status: 'pending',
+      userName: user.displayName,
       userEmail: user.email,
-      vendorEmail: ticket.userEmail,
+      vendorEmail: ticket.vendorEmail,
       bookingDate: new Date().toISOString(),
     };
 

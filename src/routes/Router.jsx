@@ -17,6 +17,9 @@ import UserProfile from '@/pages/Dashboard/Profile/UserProfile';
 import DashboardIndex from './DashboardIndex';
 import VendorRoute from './VendorRoute';
 import AddTicket from '@/pages/Dashboard/Vendor/AddTicket/AddTicket';
+import MyAddedTickets from '@/pages/Dashboard/Vendor/MyAddedTicket/MyAddedTicket';
+import UpdateTicket from '@/pages/Dashboard/Vendor/UpdateTicket/UpdateTicket';
+import RequestedBookings from '@/pages/Dashboard/Vendor/RequestedBookings/RequestedBookings';
 export const Router = createBrowserRouter([
   {
     path: '/',
@@ -79,6 +82,30 @@ export const Router = createBrowserRouter([
         element: (
           <VendorRoute>
             <AddTicket></AddTicket>
+          </VendorRoute>
+        ),
+      },
+      {
+        path: 'vendor/my-tickets',
+        element: (
+          <VendorRoute>
+            <MyAddedTickets></MyAddedTickets>
+          </VendorRoute>
+        ),
+      },
+      {
+        path: 'vendor/update-ticket/:id',
+        element: (
+          <VendorRoute>
+            <UpdateTicket></UpdateTicket>
+          </VendorRoute>
+        ),
+      },
+      {
+        path: 'vendor/bookings',
+        element: (
+          <VendorRoute>
+            <RequestedBookings></RequestedBookings>
           </VendorRoute>
         ),
       },
