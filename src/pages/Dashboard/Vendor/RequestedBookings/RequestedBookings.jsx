@@ -28,48 +28,7 @@ const RequestedBookings = () => {
     true
   );
 
-  const initialBookings = [
-    {
-      id: 1,
-      userName: 'Rahim Uddin',
-      userEmail: 'rahim@example.com',
-      ticketTitle: "Dhaka to Cox's Bazar - Green Line AC",
-      quantity: 2,
-      unitPrice: 1500,
-      totalPrice: 3000,
-      status: 'pending',
-    },
-    {
-      id: 2,
-      userName: 'Karim Ahmed',
-      userEmail: 'karim@test.com',
-      ticketTitle: 'Chittagong to Sylhet - Paharika',
-      quantity: 1,
-      unitPrice: 600,
-      totalPrice: 600,
-      status: 'pending',
-    },
-    {
-      id: 3,
-      userName: 'Fatima Begum',
-      userEmail: 'fatima@web.com',
-      ticketTitle: "Dhaka to Cox's Bazar - Green Line AC",
-      quantity: 4,
-      unitPrice: 1500,
-      totalPrice: 6000,
-      status: 'accepted',
-    },
-    {
-      id: 4,
-      userName: 'John Doe',
-      userEmail: 'john@doe.com',
-      ticketTitle: 'Barisal to Dhaka - Launch VIP',
-      quantity: 1,
-      unitPrice: 2000,
-      totalPrice: 2000,
-      status: 'rejected',
-    },
-  ];
+
 
   const updateData = useMutation({
     mutationFn: async data => {

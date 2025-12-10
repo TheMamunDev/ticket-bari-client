@@ -21,6 +21,8 @@ import MyAddedTickets from '@/pages/Dashboard/Vendor/MyAddedTicket/MyAddedTicket
 import UpdateTicket from '@/pages/Dashboard/Vendor/UpdateTicket/UpdateTicket';
 import RequestedBookings from '@/pages/Dashboard/Vendor/RequestedBookings/RequestedBookings';
 import RevenueOverview from '@/pages/Dashboard/Vendor/RevenueOverview/RevenueOverview';
+import AdminRoute from './AdminRoute';
+import ManageTickets from '@/pages/Dashboard/Admin/ManageTickets/ManageTickets';
 export const Router = createBrowserRouter([
   {
     path: '/',
@@ -76,6 +78,22 @@ export const Router = createBrowserRouter([
           <VendorRoute>
             <UserProfile></UserProfile>
           </VendorRoute>
+        ),
+      },
+      {
+        path: 'admin/profile',
+        element: (
+          <AdminRoute>
+            <UserProfile></UserProfile>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: 'admin/manage-tickets',
+        element: (
+          <AdminRoute>
+            <ManageTickets></ManageTickets>
+          </AdminRoute>
         ),
       },
       {
