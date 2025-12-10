@@ -15,7 +15,7 @@ const ManageTickets = () => {
     data: tickets,
     isLoading,
     error,
-  } = useFetch(['all-tickets-admin'], `/tickets/all`);
+  } = useFetch(['all-tickets-manage'], `/tickets/all`, true);
 
   const updateData = useMutation({
     mutationFn: async data => {
@@ -31,7 +31,7 @@ const ManageTickets = () => {
       if (response.modifiedCount) {
         toast.success('Ticket Updated Successfully');
       }
-      queryClient.setQueryData(['all-tickets-admin'], oldData => {
+      queryClient.setQueryData(['all-tickets-manage'], oldData => {
         console.log(oldData);
         return oldData.map(el =>
           el._id === data.id ? { ...el, status: data.status } : el
@@ -59,7 +59,6 @@ const ManageTickets = () => {
       <div className="card bg-base-100 shadow-xl border border-base-200">
         <div className="overflow-x-auto">
           <table className="table w-full">
-            {/* Table Head */}
             <thead className="bg-base-200">
               <tr>
                 <th>#</th>
@@ -71,7 +70,6 @@ const ManageTickets = () => {
               </tr>
             </thead>
 
-            {/* Table Body */}
             <tbody>
               {tickets.length > 0 ? (
                 tickets.map((ticket, index) => (
@@ -99,7 +97,6 @@ const ManageTickets = () => {
                       </div>
                     </td>
 
-                    {/* Route & Date */}
                     <td>
                       <div className="text-sm font-semibold flex items-center gap-1">
                         {ticket.from} <span className="text-xs">➝</span>{' '}
@@ -135,7 +132,7 @@ const ManageTickets = () => {
                         <div className="join">
                           <button
                             onClick={() =>
-                              handleApprove(ticket._id, 'accepted')
+                              handleApprove(ticket._id, 'approved')
                             }
                             className="btn btn-success btn-xs join-item text-white tooltip"
                             data-tip="Approve"

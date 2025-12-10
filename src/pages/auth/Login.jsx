@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useAuth from '@/hooks/useAuth';
 import { useForm } from 'react-hook-form';
 import SocialLogin from './SocialLogin';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function Login() {
   const { handleGoogleLogin, user, login } = useAuth();
@@ -15,24 +16,25 @@ export default function Login() {
       navigate(from, { replace: true });
     }
   }, [user, navigate, from]);
-
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  const [transition, startTransition] = useTransition();
+
   const onSubmit = async data => {
-    console.log(data);
-    try {
-      await login(data?.email, data?.pass).then(() => {
-        toast.success('Logged in');
-        navigate(from, { replace: true });
-      });
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message || 'Login failed');
-    }
+    startTransition(async () => {
+      try {
+        await login(data?.email, data?.pass).then(() => {
+          toast.success('Logged in');
+          navigate(from, { replace: true });
+        });
+      } catch (err) {
+        toast.error(err.message || 'Login failed');
+      }
+    });
   };
 
   return (
@@ -52,8 +54,19 @@ export default function Login() {
           placeholder="Password"
           className="input w-full"
         />
-        <button className="btn btn-primary w-full" type="submit">
-          Login
+        <button
+          disabled={transition}
+          className="btn btn-primary w-full disabled:bg-primary disabled:text-white"
+          type="submit"
+        >
+          {transition ? (
+            <>
+              <Spinner />
+              Loging...
+            </>
+          ) : (
+            'Login'
+          )}
         </button>
       </form>
       <SocialLogin></SocialLogin>

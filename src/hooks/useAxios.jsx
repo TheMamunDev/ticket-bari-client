@@ -34,8 +34,7 @@ const useAxios = () => {
             navigate('/login');
           });
         }
-        console.log(err);
-        return err;
+        return Promise.reject(err);
       }
     );
     return () => {

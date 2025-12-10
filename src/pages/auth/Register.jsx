@@ -7,6 +7,10 @@ import useAuth from '@/hooks/useAuth';
 import SocialLogin from './SocialLogin';
 import axios from 'axios';
 import { handleFirebaseError } from '@/lib/utils/firebaseErrorHandle';
+import useImage from '@/hooks/useImage';
+import { use, useTransition } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Spinner } from '@/components/ui/spinner';
 
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
@@ -43,51 +47,44 @@ const Register = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
 
-  const uploadToImgbb = async file => {
-    const apiKey = import.meta.env.VITE_IMGBB_KEY;
-
-    const formData = new FormData();
-    formData.append('image', file);
-    const result = await axios.post(
-      `https://api.imgbb.com/1/upload?key=${apiKey}`,
-      formData
-    );
-    console.log(result.data.data.display_url);
-    return result.data.data.display_url;
-  };
+  const [transition, startTransition] = useTransition();
 
   const onSubmit = async data => {
-    try {
+    startTransition(async () => {
       try {
-        const photo = await uploadToImgbb(data.photoURL);
-        data.photoURL = photo;
-      } catch (err) {
-        data.photoURL =
-          'https://img.icons8.com/office/300/person-male-skin-type-4.png';
-      }
-      await signUp(data.email, data.password);
-      await updateUserProfile(data.name, data.photoURL);
-      const existingUser = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/user/${data.email}`
-      );
-      if (!existingUser.data || existingUser.data.length === 0) {
-        const { password, ...safeData } = data;
-        const result = await axios.post(`${apiUrl}/user`, {
-          ...safeData,
-          authType: 'credentials',
-        });
-
-        if (result.data.acknowledged) {
-          toast.success('Account created');
-          navigate(from, { replace: true });
+        try {
+          const photo = await useImage(data.photoURL);
+          data.photoURL = photo;
+        } catch (err) {
+          console.log(err);
+          toast.error(err.message);
+          data.photoURL =
+            'https://img.icons8.com/office/300/person-male-skin-type-4.png';
         }
-      } else {
-        toast.error('User already registered');
+        await signUp(data.email, data.password);
+        await updateUserProfile(data.name, data.photoURL);
+        const existingUser = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/user/${data.email}`
+        );
+        if (!existingUser.data || existingUser.data.length === 0) {
+          const { password, ...safeData } = data;
+          const result = await axios.post(`${apiUrl}/user`, {
+            ...safeData,
+            authType: 'credentials',
+          });
+
+          if (result.data.acknowledged) {
+            toast.success('Account created');
+            navigate(from, { replace: true });
+          }
+        } else {
+          toast.error('User already registered');
+        }
+      } catch (err) {
+        handleFirebaseError(err);
+        return;
       }
-    } catch (err) {
-      handleFirebaseError(err);
-      return;
-    }
+    });
   };
 
   return (
@@ -132,8 +129,19 @@ const Register = () => {
           <p className="text-red-400">{errors.photoURL.message}</p>
         )}
         <div></div>
-        <button className="btn btn-primary w-full" type="submit">
-          Create account
+        <button
+          disabled={transition}
+          className="btn btn-primary w-full disabled:bg-primary disabled:text-white"
+          type="submit"
+        >
+          {transition ? (
+            <>
+              <Spinner />
+              Creating Account....
+            </>
+          ) : (
+            'Create Account'
+          )}
         </button>
       </form>
       <SocialLogin></SocialLogin>

@@ -23,6 +23,8 @@ import RequestedBookings from '@/pages/Dashboard/Vendor/RequestedBookings/Reques
 import RevenueOverview from '@/pages/Dashboard/Vendor/RevenueOverview/RevenueOverview';
 import AdminRoute from './AdminRoute';
 import ManageTickets from '@/pages/Dashboard/Admin/ManageTickets/ManageTickets';
+import ManageUsers from '@/pages/Dashboard/Admin/ManageUsers/ManageUsers';
+import AdvertiesTickets from '@/pages/Dashboard/Admin/AdvertiesTickets/AdvertiesTickets';
 export const Router = createBrowserRouter([
   {
     path: '/',
@@ -93,6 +95,22 @@ export const Router = createBrowserRouter([
         element: (
           <AdminRoute>
             <ManageTickets></ManageTickets>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: 'admin/manage-users',
+        element: (
+          <AdminRoute>
+            <ManageUsers></ManageUsers>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: 'admin/advertise',
+        element: (
+          <AdminRoute>
+            <AdvertiesTickets></AdvertiesTickets>
           </AdminRoute>
         ),
       },

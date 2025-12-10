@@ -20,8 +20,6 @@ const AddTicket = () => {
   const secureApi = useAxios();
   const { user, loading: authLoading } = useAuth();
 
-  const [isPending, startTransition] = useTransition();
-
   const formateTime = time => {
     let [hour, minute] = time.split(':').map(Number);
 
@@ -37,12 +35,11 @@ const AddTicket = () => {
         const res = await secureApi.post('/tickets', data);
         return res.data;
       } catch (error) {
-        console.log(error);
+        throw error;
       }
     },
     onSuccess: (data, insertedData) => {
-      console.log(data);
-      if (data?.result.insertedId) {
+      if (data.result.insertedId) {
         toast.success('Ticket Added Successfully');
         Swal.fire({
           title: ` Ticket added Success `,
@@ -62,6 +59,10 @@ const AddTicket = () => {
     },
     onError: error => {
       console.log(error);
+      const message = error?.response?.data?.message || 'Something went wrong';
+      toast.error(message, {
+        position: 'top-center',
+      });
     },
   });
 
@@ -95,7 +96,6 @@ const AddTicket = () => {
       };
       addTicket.mutate(ticketData);
       // reset();
-      navigate('/dashboard/vendor/my-tickets');
     } catch (error) {
       console.error('Error adding ticket:', error);
       alert('Failed to add ticket.');
