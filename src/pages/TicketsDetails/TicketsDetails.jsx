@@ -28,19 +28,22 @@ const TicketDetails = () => {
     setIsExpired(status);
   };
 
-  const isBookDisabled = isExpired || ticket?.quantity === 0;
+  const isBookDisabled =
+    isExpired || ticket?.quantity === 0 || ticket?.status === 'rejected';
 
   let buttonText = 'Book Now';
   if (ticket?.quantity === 0) buttonText = 'Sold Out';
   if (isExpired) buttonText = 'Departure Time Passed';
+  if (ticket?.status === 'rejected') buttonText = 'Ticket Rejected';
+
   if (isLoading) return <LoadingSpinner></LoadingSpinner>;
 
   return (
-    <div className="min-h-screen bg-base-200 py-10 px-4">
+    <div className="bg-base-200 w-full px-4 sm:px-6 py-6 md:py-12">
       {isLoading ? (
         <div>Loading...</div>
       ) : (
-        <div className="max-w-6xl mx-auto bg-base-100 rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-base-100 rounded-2xl shadow-xl overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="h-64 lg:h-full relative">
               <img

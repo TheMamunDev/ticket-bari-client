@@ -8,13 +8,13 @@ import { ToastContainer } from 'react-toastify';
 
 const Root = () => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="">
       <div className="sticky top-0 z-50">
         <Navbar />
       </div>
-      <main className="min-h-[calc(100vh-300px)] max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto m-0">
         <Outlet />
-      </main>
+      </div>
       <Footer />
     </div>
   );

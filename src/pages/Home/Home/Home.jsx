@@ -6,11 +6,13 @@ import Advertiesment from '@/components/Home/Advertiesment';
 import LatestTickets from '@/components/Home/LatestTickets';
 import PopularDestinations from '@/components/Home/PopularDestinations';
 import Newsletter from '@/components/Home/NewsLatter';
+import SearchForm from '@/components/Shared/SearchForm/SearchForm';
 
 export default function Home() {
   return (
-    <div className="min-h-screen max-w-full mx-auto">
+    <div className="min-h-screen max-w-11/12 mx-auto">
       <HeroSlider></HeroSlider>
+      <SearchForm redirectTo="all-tickets"></SearchForm>
       <Advertiesment></Advertiesment>
       <LatestTickets></LatestTickets>
       <PopularDestinations></PopularDestinations>

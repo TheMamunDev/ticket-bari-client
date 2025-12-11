@@ -12,7 +12,7 @@ import { FaCcStripe, FaCcVisa, FaCcMastercard } from 'react-icons/fa6'; // speci
 const Footer = () => {
   return (
     <div className="bg-neutral text-neutral-content">
-      <footer className="footer p-10 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <footer className="footer max-w-7xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <aside>
           <div className="flex items-center gap-2 text-3xl font-bold text-primary mb-2">
             <FaBus className="text-white" />
