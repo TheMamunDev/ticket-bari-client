@@ -26,6 +26,8 @@ import ManageTickets from '@/pages/Dashboard/Admin/ManageTickets/ManageTickets';
 import ManageUsers from '@/pages/Dashboard/Admin/ManageUsers/ManageUsers';
 import AdvertiesTickets from '@/pages/Dashboard/Admin/AdvertiesTickets/AdvertiesTickets';
 import ErrorPage from '@/pages/ErrorPage/ErrorPage';
+import About from '@/pages/About/About';
+import Contact from '@/pages/Contact/Contact';
 export const Router = createBrowserRouter([
   {
     path: '/',
@@ -56,6 +58,14 @@ export const Router = createBrowserRouter([
       {
         path: 'all-tickets',
         Component: AllTickets,
+      },
+      {
+        path: 'about',
+        Component: About,
+      },
+      {
+        path: 'contact',
+        Component: Contact,
       },
       {
         path: 'ticket/:id',
