@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   FaMapMarkerAlt,
   FaBus,
@@ -12,14 +12,22 @@ import CountDown from '@/components/Shared/CountDown/CountDown';
 import BookingModal from '@/components/Shared/BookingModal/BookingModal';
 import useFetch from '@/hooks/useFetch';
 import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
+import useTitle from '@/hooks/useTitle';
+import TicketDetailsSkeleton from '@/components/Shared/Loader/TicketDetailsSkeleton';
+import useAuth from '@/hooks/useAuth';
+import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
 
 const TicketDetails = () => {
+  const { user, loading } = useAuth();
   const { id } = useParams();
   const {
     data: ticket,
     isLoading,
     error,
+    isError,
+    refetch,
   } = useFetch(['ticket', id], `/tickets/${id}`, true);
+  useTitle(`Ticket Details - ${ticket?.title}`);
 
   const [isExpired, setIsExpired] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,12 +44,36 @@ const TicketDetails = () => {
   if (isExpired) buttonText = 'Departure Time Passed';
   if (ticket?.status === 'rejected') buttonText = 'Ticket Rejected';
 
-  if (isLoading) return <LoadingSpinner></LoadingSpinner>;
+  const handleBookBtn = () => {
+    setIsModalOpen(true);
+  };
 
+  if (loading) return <LoadingSpinner></LoadingSpinner>;
+  if (isError) {
+    const isNotFound = error?.response?.status === 404;
+    if (isNotFound) {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+          <div className="text-9xl mb-4">🎫</div>
+          <h2 className="text-3xl font-bold text-base-content mb-2">
+            Ticket Not Found
+          </h2>
+          <p className="text-base-content/60 mb-6 max-w-md">
+            The ticket you are looking for might have been removed or the link
+            is invalid.
+          </p>
+          <Link to="/all-tickets" className="btn btn-primary text-white">
+            Browse All Tickets
+          </Link>
+        </div>
+      );
+    }
+    return <DataFetchError error={error} refetch={refetch} />;
+  }
   return (
     <div className="bg-base-200 w-full px-4 sm:px-6 py-6 md:py-12">
       {isLoading ? (
-        <div>Loading...</div>
+        <TicketDetailsSkeleton></TicketDetailsSkeleton>
       ) : (
         <div className="bg-base-100 rounded-2xl shadow-xl overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -122,8 +154,8 @@ const TicketDetails = () => {
                       </span>
                     ) : (
                       <CountDown
-                        targetDate={ticket.departureDate}
-                        targetTime={ticket.departureTime}
+                        targetDate={ticket?.departureDate}
+                        targetTime={ticket?.departureTime}
                         onExpire={handleExpire}
                       />
                     )}
@@ -138,7 +170,7 @@ const TicketDetails = () => {
                 </div>
 
                 <button
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={handleBookBtn}
                   disabled={isBookDisabled}
                   className="btn btn-primary btn-lg w-full text-white shadow-lg disabled:bg-gray-400 disabled:text-gray-700"
                 >

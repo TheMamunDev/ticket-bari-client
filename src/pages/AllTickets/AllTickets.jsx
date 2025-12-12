@@ -4,16 +4,19 @@ import { FaFilter, FaSearch } from 'react-icons/fa';
 import useFetch from '@/hooks/useFetch';
 import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
 import SearchForm from '@/components/Shared/SearchForm/SearchForm';
-import { useNavigate, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import TicketCardSkeleton from '@/components/Shared/Loader/TicketCardSkeleton';
+import useTitle from '@/hooks/useTitle';
+import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
 
 const AllTickets = () => {
+  useTitle('All Tickets');
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState({});
   const sort = searchParams.get('sort') || '';
   const navigate = useNavigate();
   const page = Number(searchParams.get('page')) || 1;
-  const limit = Number(searchParams.get('limit')) || 10;
+  const limit = Number(searchParams.get('limit')) || 9;
 
   useEffect(() => {
     const fromQuery = searchParams.get('from')?.toLowerCase() || '';
@@ -34,12 +37,12 @@ const AllTickets = () => {
   }, [searchParams]);
 
   const queryString = new URLSearchParams(query).toString();
-  const { data, isLoading, error } = useFetch(
+  const { data, isLoading, error, isError, refetch } = useFetch(
     ['all-tickets', query, sort],
     `/tickets/?${queryString}`
   );
   const tickets = data?.result || [];
-  console.log(data);
+
   const handleSortChange = value => {
     const params = new URLSearchParams(searchParams);
     console.log(params);
@@ -54,7 +57,27 @@ const AllTickets = () => {
     navigate(`/all-tickets?${params.toString()}`);
   };
 
-  // if (isLoading) return <LoadingSpinner></LoadingSpinner>;
+  if (isError) {
+    const isNotFound = error?.response?.status === 404;
+    if (isNotFound) {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+          <div className="text-9xl mb-4">🎫</div>
+          <h2 className="text-3xl font-bold text-base-content mb-2">
+            Ticket Not Found
+          </h2>
+          <p className="text-base-content/60 mb-6 max-w-md">
+            There Are No Ticket Available At This Momment , Try Later . Thank
+            You !
+          </p>
+          <Link to="/" className="btn btn-primary text-white">
+            Home
+          </Link>
+        </div>
+      );
+    }
+    return <DataFetchError error={error} refetch={refetch} />;
+  }
 
   return (
     <div className="min-h-screen bg-base-200 py-8 px-4 sm:px-6 lg:px-8">
@@ -95,7 +118,7 @@ const AllTickets = () => {
         <div>
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <TicketCardSkeleton></TicketCardSkeleton>
+              <TicketCardSkeleton count={9}></TicketCardSkeleton>
             </div>
           ) : (
             <>
@@ -106,6 +129,7 @@ const AllTickets = () => {
                       <TicketCard key={ticket.id} ticket={ticket} />
                     ))}
                   </div>
+
                   <div className="flex justify-center gap-4 mt-6">
                     <button
                       className="btn btn-sm"

@@ -7,6 +7,9 @@ const CountDown = ({ targetDate, targetTime, onExpire }) => {
     minutes: 0,
     seconds: 0,
   });
+  if (!targetDate || !targetTime) {
+    return <span>Loading...</span>;
+  }
 
   useEffect(() => {
     const parseDateTime = (dateStr, timeStr) => {
@@ -27,22 +30,24 @@ const CountDown = ({ targetDate, targetTime, onExpire }) => {
 
     const target = parseDateTime(targetDate, targetTime);
 
-    const interval = setInterval(() => {
+    const updateTimeLeft = () => {
       const now = new Date();
       const difference = target - now;
 
       if (difference <= 0) {
-        clearInterval(interval);
-        onExpire(true);
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        onExpire(true);
       } else {
+        onExpire(false);
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
         const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
         const minutes = Math.floor((difference / 1000 / 60) % 60);
         const seconds = Math.floor((difference / 1000) % 60);
         setTimeLeft({ days, hours, minutes, seconds });
       }
-    }, 1000);
+    };
+    updateTimeLeft();
+    const interval = setInterval(updateTimeLeft, 1000);
 
     return () => clearInterval(interval);
   }, [targetDate, targetTime, onExpire]);

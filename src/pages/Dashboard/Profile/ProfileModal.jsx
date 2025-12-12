@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import useAuth from '@/hooks/useAuth';
 import useAxios from '@/hooks/useAxios';
+import useImage from '@/hooks/useImage';
 
 const ProfileModal = ({ user, userData, isOpen, closeModal }) => {
   const { updateUserProfile } = useAuth();
@@ -63,7 +64,7 @@ const ProfileModal = ({ user, userData, isOpen, closeModal }) => {
       }
       if (formData.photo && formData.photo.length > 0) {
         const file = formData.photo[0];
-        imageURL = await uploadToImgbb(file);
+        imageURL = await useImage(file);
         if (imageURL !== user?.photoURL) {
           updatePayload.photoURL = imageURL;
         }

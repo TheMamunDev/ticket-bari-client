@@ -32,8 +32,8 @@ const BookedTicketCard = ({ booking, onPay }) => {
     return new Date() > departureDate;
   };
 
-  const handleTimerExpire = () => {
-    setIsExpired(true);
+  const handleTimerExpire = status => {
+    setIsExpired(status);
   };
 
   const isPayEnabled = booking.status === 'accepted' && !isExpired;

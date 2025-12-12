@@ -26,13 +26,10 @@ import useAuth from '@/hooks/useAuth';
 import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
 
 const DashboardLayout = () => {
-  const { user: authUser, loading } = useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { user: authUser, loading, logOut } = useAuth();
   const location = useLocation();
   const { role, roleLoading } = useRole();
   const navigate = useNavigate();
-
-  // const user = role;
 
   if (loading || roleLoading) {
     return <LoadingSpinner></LoadingSpinner>;
@@ -129,21 +126,25 @@ const DashboardLayout = () => {
             to="/dashboard/admin/profile"
             icon={FaUser}
             label="Admin Profile"
+            toolTip="Profile"
           />
           <LinkItem
             to="/dashboard/admin/manage-tickets"
             icon={FaTicketAlt}
             label="Manage Tickets"
+            toolTip="Manage Tickets"
           />
           <LinkItem
             to="/dashboard/admin/manage-users"
             icon={FaUsers}
             label="Manage Users"
+            toolTip="Manage Users"
           />
           <LinkItem
             to="/dashboard/admin/advertise"
             icon={FaBullhorn}
             label="Advertise Tickets"
+            toolTip="Advertise Tickets"
           />
         </>
       );
@@ -222,7 +223,10 @@ const DashboardLayout = () => {
               className="mt-auto p-4 border-t border-base-200 is-drawer-close:tooltip is-drawer-close:tooltip-right"
               data-tip="Logout"
             >
-              <button className="is-drawer-open:btn btn-outline btn-error w-full gap-2">
+              <button
+                onClick={() => logOut()}
+                className="is-drawer-open:btn btn-outline btn-error w-full gap-2"
+              >
                 <FaSignOutAlt />{' '}
                 <span className="is-drawer-close:hidden">Logout</span>
               </button>

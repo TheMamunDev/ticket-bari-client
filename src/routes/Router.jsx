@@ -25,10 +25,12 @@ import AdminRoute from './AdminRoute';
 import ManageTickets from '@/pages/Dashboard/Admin/ManageTickets/ManageTickets';
 import ManageUsers from '@/pages/Dashboard/Admin/ManageUsers/ManageUsers';
 import AdvertiesTickets from '@/pages/Dashboard/Admin/AdvertiesTickets/AdvertiesTickets';
+import ErrorPage from '@/pages/ErrorPage/ErrorPage';
 export const Router = createBrowserRouter([
   {
     path: '/',
     Component: Root,
+    errorElement: <ErrorPage></ErrorPage>,
     children: [
       {
         path: '/',

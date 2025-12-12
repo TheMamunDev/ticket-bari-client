@@ -1,5 +1,6 @@
 import useAuth from '@/hooks/useAuth';
 import useAxios from '@/hooks/useAxios';
+import useImage from '@/hooks/useImage';
 import { useMutation } from '@tanstack/react-query';
 import React, { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,16 +17,14 @@ const AddTicket = () => {
     reset,
   } = useForm();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const secureApi = useAxios();
   const { user, loading: authLoading } = useAuth();
+  const [isTranstition, startTansition] = useTransition();
 
   const formateTime = time => {
     let [hour, minute] = time.split(':').map(Number);
-
     const ampm = hour >= 12 ? 'PM' : 'AM';
     hour = hour % 12 || 12;
-
     return `${hour}:${minute.toString().padStart(2, '0')} ${ampm}`;
   };
 
@@ -40,6 +39,7 @@ const AddTicket = () => {
     },
     onSuccess: (data, insertedData) => {
       if (data.result.insertedId) {
+        reset();
         toast.success('Ticket Added Successfully');
         Swal.fire({
           title: ` Ticket added Success `,
@@ -67,41 +67,36 @@ const AddTicket = () => {
   });
 
   const onSubmit = async data => {
-    setLoading(true);
-    console.log('Form Data:', data);
-
-    try {
-      const formData = new FormData();
-      formData.append('image', data.image[0]);
-      const imageUrl = 'https://i.ibb.co/dummy/ticket-image.jpg';
-      const formattedTime = formateTime(data.departureTime);
-      data.departureTime = formattedTime;
-
-      const ticketData = {
-        title: data.title,
-        from: data.from,
-        to: data.to,
-        transportType: data.transportType,
-        price: parseFloat(data.price),
-        quantity: parseInt(data.quantity),
-        departureDate: data.departureDate,
-        departureTime: formattedTime,
-        perks: data.perks || [],
-        image: imageUrl,
-        vendorName: user.displayName,
-        vendorEmail: user.email,
-        status: 'pending',
-        isAdvertised: false,
-        createdAt: new Date(),
-      };
-      addTicket.mutate(ticketData);
-      // reset();
-    } catch (error) {
-      console.error('Error adding ticket:', error);
-      alert('Failed to add ticket.');
-    } finally {
-      setLoading(false);
-    }
+    startTansition(async () => {
+      try {
+        const formData = new FormData();
+        const imageURL = await useImage(data.image[0]);
+        formData.append('image', imageURL);
+        const formattedTime = formateTime(data.departureTime);
+        data.departureTime = formattedTime;
+        const ticketData = {
+          title: data.title,
+          from: data.from,
+          to: data.to,
+          transportType: data.transportType,
+          price: parseFloat(data.price),
+          quantity: parseInt(data.quantity),
+          departureDate: data.departureDate,
+          departureTime: formattedTime,
+          perks: data.perks || [],
+          image: imageURL,
+          vendorName: user.displayName,
+          vendorEmail: user.email,
+          status: 'pending',
+          isAdvertised: false,
+          createdAt: new Date(),
+        };
+        addTicket.mutate(ticketData);
+      } catch (error) {
+        console.error('Error adding ticket:', error);
+        toast.error('Failed to add ticket.');
+      }
+    });
   };
 
   return (
@@ -260,10 +255,8 @@ const AddTicket = () => {
               </div>
             </div>
 
-            <div className="form-control mb-6">
-              <label className="label font-semibold">
-                Ticket Image (Thumbnail)
-              </label>
+            <div className="form-control mb-6 flex flex-col space-y-2">
+              <label className="label font-semibold">Ticket Image</label>
               <input
                 type="file"
                 className="file-input file-input-bordered file-input-primary w-full max-w-xs"
@@ -305,12 +298,10 @@ const AddTicket = () => {
             <div className="form-control mt-6">
               <button
                 type="submit"
-                className={`btn btn-primary w-full text-lg text-white ${
-                  loading ? 'loading' : ''
-                }`}
-                disabled={loading}
+                className={`btn btn-primary w-full text-lg text-white disabled:bg-primary disabled:text-white disabled:cursor-not-allowed`}
+                disabled={isTranstition}
               >
-                {loading ? (
+                {isTranstition ? (
                   'Saving Ticket...'
                 ) : (
                   <>

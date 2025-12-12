@@ -3,15 +3,30 @@ import { FaStar } from 'react-icons/fa';
 import TicketCard from '../Cards/TicketCard';
 import useFetch from '@/hooks/useFetch';
 import LoadingSpinner from '../Shared/Loader/LoadingSpinner';
+import { Link } from 'react-router';
+import NoAdvertisedTickets from './NoAdvertisedTickets';
+import TicketCardSkeleton from '../Shared/Loader/TicketCardSkeleton';
 
 const Advertiesment = () => {
   const {
-    data: advertisedTickets,
+    data: advertisedTickets = [],
     isLoading,
     error,
+    isError,
+    refetch,
   } = useFetch(['featured-tickets'], '/tickets/featured');
 
-  if (isLoading) return <LoadingSpinner></LoadingSpinner>;
+  if (advertisedTickets.length === 0) {
+    return (
+      <section className="py-16 md:py-24 bg-base-200 px-4">
+        <NoAdvertisedTickets />
+      </section>
+    );
+  }
+
+  if (isError) {
+    return <DataFetchError error={error} refetch={refetch} />;
+  }
 
   return (
     <section className="py-16 md:py-24 bg-base-200">
@@ -31,11 +46,17 @@ const Advertiesment = () => {
             Hand-picked by our team for the best comfort and value.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {advertisedTickets.slice(0, 6).map(ticket => (
-            <TicketCard key={ticket.id} ticket={ticket} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <TicketCardSkeleton count={6}></TicketCardSkeleton>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {advertisedTickets.map(ticket => (
+              <TicketCard key={ticket.id} ticket={ticket} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

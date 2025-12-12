@@ -144,11 +144,14 @@ const Navbar = () => {
                   tabIndex={0}
                   className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-lg bg-base-100 rounded-box w-52 border border-base-200"
                 >
-                  <li className="px-4 py-2 border-b border-base-200 mb-2">
+                  <Link
+                    to={'/dashboard'}
+                    className="px-4 py-2 border-b border-base-200 mb-2"
+                  >
                     <span className="font-semibold text-primary">
                       My Profile
                     </span>
-                  </li>
+                  </Link>
                   <li>
                     <button
                       onClick={() => handleSignOut()}

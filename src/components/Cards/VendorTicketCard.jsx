@@ -34,12 +34,10 @@ const VendorTicketCard = ({ ticket, onUpdate, onDelete }) => {
     }
   };
 
-  // Logic: Buttons are disabled if status is 'rejected'
   const isActionDisabled = ticket.status === 'rejected';
 
   return (
     <div className="card bg-base-100 shadow-xl border border-base-200 h-full flex flex-col group">
-      {/* Image & Status Overlay */}
       <figure className="relative h-48 overflow-hidden">
         <img
           src={ticket.image}
@@ -58,35 +56,25 @@ const VendorTicketCard = ({ ticket, onUpdate, onDelete }) => {
       </figure>
 
       <div className="card-body p-5 flex-grow">
-        {/* Title */}
         <h2 className="card-title text-base font-bold leading-tight mb-3 min-h-[3rem]">
           {ticket.title}
         </h2>
-
-        {/* Route Info */}
         <div className="text-sm text-base-content/70 mb-4 flex items-center gap-2">
           <FaMapMarkerAlt className="text-primary" />
           <span className="font-semibold">{ticket.from}</span>
           <span>→</span>
           <span className="font-semibold">{ticket.to}</span>
         </div>
-
-        {/* Date & Quantity */}
         <div className="flex justify-between items-center text-xs opacity-60 mb-4 bg-base-200 p-2 rounded-lg">
           <span>📅 {ticket.departureDate}</span>
           <span>💺 {ticket.quantity} Seats</span>
         </div>
-
-        {/* Feedback Message (If Rejected) */}
         {ticket.status === 'rejected' && (
           <div className="alert alert-error text-white py-2 text-xs mb-4">
             <span>Admin Reason: {ticket.feedback || 'Policy Violation'}</span>
           </div>
         )}
-
-        {/* Action Buttons */}
         <div className="card-actions grid grid-cols-2 gap-3 mt-auto">
-          {/* Update Button */}
           <button
             onClick={() => onUpdate(ticket)}
             disabled={isActionDisabled}
@@ -94,8 +82,6 @@ const VendorTicketCard = ({ ticket, onUpdate, onDelete }) => {
           >
             <FaEdit /> Update
           </button>
-
-          {/* Delete Button */}
           <button
             onClick={() => onDelete(ticket)}
             disabled={isActionDisabled}

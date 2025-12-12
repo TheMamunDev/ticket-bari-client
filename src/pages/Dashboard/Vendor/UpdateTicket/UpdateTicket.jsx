@@ -1,20 +1,14 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { use, useEffect, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  FaSave,
-  FaArrowLeft,
-  FaBus,
-  FaPlane,
-  FaTrain,
-  FaShip,
-} from 'react-icons/fa';
+import { FaSave, FaArrowLeft } from 'react-icons/fa';
 import useAuth from '@/hooks/useAuth';
 import useFetch from '@/hooks/useFetch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useTime from '@/hooks/useTime';
 import useAxios from '@/hooks/useAxios';
 import { toast } from 'react-toastify';
+import useImage from '@/hooks/useImage';
 
 const UpdateTicket = () => {
   const { id } = useParams();
@@ -33,9 +27,11 @@ const UpdateTicket = () => {
     isLoading: fetchLoading,
     error,
   } = useFetch(['update-ticket', id], `/tickets/${id}`, true);
+  const [isTransition, startTransition] = useTransition();
 
   const queryClient = useQueryClient();
   const secureApi = useAxios();
+  const [img, setImg] = useState(fetchedData?.image);
 
   const updateData = useMutation({
     mutationFn: async data => {
@@ -59,13 +55,20 @@ const UpdateTicket = () => {
     },
   });
 
-  const onSubmit = data => {
-    const newData = {
-      ...fetchedData,
-      ...data,
-      departureTime: useTime(data.departureTime),
-    };
-    updateData.mutate(newData);
+  const onSubmit = async data => {
+    startTransition(async () => {
+      if (data.image[0]) {
+        setImg(await useImage(data.image[0]));
+      }
+      // const imageURL = await useImage(data.image[0]);
+      const newData = {
+        ...fetchedData,
+        ...data,
+        image: img,
+        departureTime: useTime(data.departureTime),
+      };
+      updateData.mutate(newData);
+    });
   };
 
   if (fetchLoading || loading) {
@@ -78,14 +81,12 @@ const UpdateTicket = () => {
   function convertAmPmTo24(timeStr) {
     const [time, modifier] = timeStr.split(' ');
     let [hours, minutes] = time.split(':').map(Number);
-
     if (modifier === 'PM' && hours !== 12) {
       hours += 12;
     }
     if (modifier === 'AM' && hours === 12) {
       hours = 0;
     }
-
     return `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
       .padStart(2, '0')}`;
@@ -238,13 +239,13 @@ const UpdateTicket = () => {
               </div>
             </div>
 
-            <div className="form-control mb-8">
-              <label className="label font-semibold">Image URL</label>
+            <div className="form-control mb-8 flex flex-col space-y-2">
+              <label className="label font-semibold">Image</label>
               <input
-                type="url"
-                defaultValue={fetchedData.image}
-                className="input input-bordered w-full"
-                {...register('image', { required: 'Image URL is required' })}
+                type="file"
+                className="file-input file-input-bordered file-input-primary w-full max-w-xs"
+                accept="image/*"
+                {...register('image')}
               />
               <label className="label">
                 <span className="label-text-alt text-warning">
@@ -255,9 +256,16 @@ const UpdateTicket = () => {
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="btn btn-primary flex-1 text-white gap-2"
+                disabled={isTransition}
+                className="btn btn-primary flex-1 text-white gap-2 disabled:bg-primary disabled:text-white disabled:cursor-not-allowed"
               >
-                <FaSave /> Save Changes
+                {isTransition ? (
+                  'Saving...'
+                ) : (
+                  <>
+                    <FaSave /> Save Changes
+                  </>
+                )}
               </button>
               <button
                 type="button"

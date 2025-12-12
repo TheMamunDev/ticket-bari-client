@@ -5,16 +5,29 @@ import useAxios from '@/hooks/useAxios';
 import useFetch from '@/hooks/useFetch';
 import { useMutation } from '@tanstack/react-query';
 import React from 'react';
+import { useNavigate, useSearchParams } from 'react-router';
 import Swal from 'sweetalert2';
 
 const MyBookedTickets = () => {
+  const [searchParams] = useSearchParams();
   const { user, loading } = useAuth();
   const secureApi = useAxios();
-  const {
-    data: bookings,
-    isLoading,
-    error,
-  } = useFetch(['my-bookings', user.email], `/bookings/${user.email}`, true);
+  const page = Number(searchParams.get('page')) || 1;
+  const navigate = useNavigate();
+
+  const { data, isLoading, error } = useFetch(
+    ['my-bookings', user.email, page],
+    `/bookings/${user.email}?page=${page}`,
+    true
+  );
+  const handlePageChange = newPage => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', newPage);
+    navigate(`/dashboard/user/booked-tickets?${params.toString()}`);
+  };
+
+  const bookings = data?.result || [];
+  const totalPages = data?.totalPages || 1;
 
   const payAmount = useMutation({
     mutationFn: async data => {
@@ -31,7 +44,6 @@ const MyBookedTickets = () => {
     },
   });
   const handlePayNow = async booking => {
-    console.log(booking);
     const newData = {
       bookingId: booking._id,
       ticketTitle: booking.ticketTitle,
@@ -40,6 +52,8 @@ const MyBookedTickets = () => {
       userEmail: user.email,
       ticketId: booking.ticketId,
     };
+    console.log(newData);
+
     const result = await Swal.fire({
       title: 'Proceed to Payment?',
       text: 'You will be redirected to Stripe checkout.',
@@ -96,6 +110,27 @@ const MyBookedTickets = () => {
           </p>
         </div>
       )}
+      <div className="flex justify-center gap-4 mt-6">
+        <button
+          className="btn btn-sm"
+          disabled={page <= 1}
+          onClick={() => handlePageChange(page - 1)}
+        >
+          {' '}
+          Prev
+        </button>
+        <span className="font-semibold">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          className="btn btn-sm"
+          disabled={page >= totalPages}
+          onClick={() => handlePageChange(page + 1)}
+        >
+          {' '}
+          Next
+        </button>
+      </div>
     </div>
   );
 };

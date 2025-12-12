@@ -8,9 +8,10 @@ import SocialLogin from './SocialLogin';
 import axios from 'axios';
 import { handleFirebaseError } from '@/lib/utils/firebaseErrorHandle';
 import useImage from '@/hooks/useImage';
-import { use, useTransition } from 'react';
+import { use, useState, useTransition } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
@@ -22,7 +23,11 @@ const MAX_FILE_SIZE = 5000000;
 const schema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email(),
-  password: z.string().min(6, 'Password Min Length is 6 Character'),
+  password: z
+    .string()
+    .min(6, 'Password must be at least 6 characters long')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter'),
   photoURL: z
     .any()
     .transform(fileList => fileList?.[0])
@@ -46,6 +51,7 @@ const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
+  const [showPassword, setShowPassword] = useState(false);
 
   const [transition, startTransition] = useTransition();
 
@@ -108,12 +114,22 @@ const Register = () => {
         {errors.email && (
           <p className="text-red-500 text-sm">{errors.email.message}</p>
         )}
-        <input
-          type="password"
-          {...register('password')}
-          placeholder="Password"
-          className="input w-full"
-        />
+        <div className="relative">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            {...register('password')}
+            placeholder="Password"
+            className="input w-full pr-12"
+          />
+
+          <span
+            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-600"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </span>
+        </div>
+
         {errors.password && (
           <p className="text-red-500 text-sm">{errors.password.message}</p>
         )}
