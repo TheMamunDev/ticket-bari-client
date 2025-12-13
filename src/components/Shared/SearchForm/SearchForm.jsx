@@ -90,7 +90,7 @@ const SearchForm = ({ redirectTo, type = [] }) => {
             <select
               type="text"
               placeholder="Destination City"
-              className="w-full bg-transparent focus:outline-none font-bold text-lg placeholder-gray-300 text-base-content"
+              className="w-full bg-base-200 focus:outline-none font-bold text-lg placeholder-base-200 text-base-content"
               value={transfort}
               onChange={e => setTransfort(e.target.value)}
             >

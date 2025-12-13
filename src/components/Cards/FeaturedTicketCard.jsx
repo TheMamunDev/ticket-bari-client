@@ -15,7 +15,7 @@ import {
   FaPlaneArrival,
 } from 'react-icons/fa';
 
-const TicketCard = ({ ticket }) => {
+const FeaturedTicketCard = ({ ticket }) => {
   const getTransportStyle = type => {
     switch (type.toLowerCase()) {
       case 'bus':
@@ -34,8 +34,11 @@ const TicketCard = ({ ticket }) => {
   const { icon, color } = getTransportStyle(ticket.transportType);
 
   return (
-    <div className="card bg-base-100 shadow-xl border border-base-200 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group h-full flex flex-col">
-      <figure className="relative h-48 overflow-hidden shrink-0">
+    <div className="card  transition-all duration-300 group h-full flex flex-col">
+      <div className="bg-[#6B2F56] rounded-t-3xl text-white px-4 py-2 flex items-center gap-2 text-sm font-medium">
+        <FaThumbtack className="rotate-45" /> Featured Deal
+      </div>
+      <figure className="relative h-48 overflow-hidden shrink-0 rounded-b-3xl">
         <img
           src={ticket.image}
           alt={ticket.title}
@@ -53,7 +56,7 @@ const TicketCard = ({ ticket }) => {
         </div>
       </figure>
 
-      <div className="card-body p-5 flex flex-col flex-grow">
+      <div className="card-body px-1 py-5 flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-1">
           <h2
             className="card-title text-lg font-bold text-base-content line-clamp-1 w-2/3"
@@ -108,7 +111,7 @@ const TicketCard = ({ ticket }) => {
             to={`/ticket/${ticket._id}`}
             className="btn btn-primary btn-sm w-full text-white font-bold"
           >
-            See Details
+            View Deals
           </Link>
         </div>
       </div>
@@ -116,4 +119,4 @@ const TicketCard = ({ ticket }) => {
   );
 };
 
-export default TicketCard;
+export default FeaturedTicketCard;

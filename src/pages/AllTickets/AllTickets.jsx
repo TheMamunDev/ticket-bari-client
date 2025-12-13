@@ -100,7 +100,7 @@ const AllTickets = () => {
               </label>
               <select
                 name="sort"
-                className="w-full bg-transparent focus:outline-none font-bold text-lg placeholder-gray-300 text-base-content"
+                className="w-full bg-base-200 focus:outline-none font-bold text-lg placeholder-base-200 text-base-content"
                 value={sort}
                 onChange={e => handleSortChange(e.target.value)}
               >

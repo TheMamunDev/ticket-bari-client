@@ -37,8 +37,8 @@ const LatestTickets = () => {
   return (
     <section className="py-16 bg-base-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
-          <div>
+        <div className="flex flex-col md:flex-row justify-between md:items-end items-start mb-10 gap-4">
+          <div className="flex justify-center flex-col items-start">
             <div className="flex items-center gap-2 text-primary font-bold mb-2">
               <FaClock />
               <span className="uppercase tracking-widest text-sm">
@@ -49,8 +49,10 @@ const LatestTickets = () => {
               Latest Tickets
             </h2>
           </div>
-
-          <Link to="/all-tickets" className="btn btn-outline btn-primary group">
+          <Link
+            to="/all-tickets"
+            className="inline-flex items-center gap-2 btn btn-outline btn-primary group w-fit btn-sm md:btn-md"
+          >
             View All Tickets
             <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
           </Link>
