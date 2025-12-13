@@ -103,7 +103,7 @@ const Footer = () => {
             <p className="text-xs mt-2 text-gray-500">Secured by Stripe</p>
           </nav>
         </div>
-        <div className="footer flex justify-between items-center mt-3 pt-3  max-w-11/12 mx-auto text-neutral-content border-t border-gray-700">
+        <div className="footer flex flex-col md:flex-row justify-between items-center mt-3 pt-3  max-w-11/12 mx-auto text-neutral-content border-t border-gray-700">
           <aside>
             <p className="text-sm">
               © {new Date().getFullYear()}{' '}
@@ -111,7 +111,7 @@ const Footer = () => {
               rights reserved.
             </p>
           </aside>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2.5 md:gap-6">
             <a href="#" className="group">
               <Facebook
                 size={20}

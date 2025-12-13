@@ -50,16 +50,6 @@ const Navbar = () => {
         <>
           <li>
             <NavLink
-              to="/all-tickets"
-              className={({ isActive }) =>
-                isActive ? 'text-primary font-bold' : 'font-medium'
-              }
-            >
-              All Tickets
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
               to={dashboardRoute}
               className={({ isActive }) =>
                 isActive ? 'text-primary font-bold' : 'font-medium'

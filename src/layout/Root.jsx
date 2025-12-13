@@ -5,10 +5,12 @@ import { Outlet } from 'react-router';
 import Navbar from '@/components/Shared/Headers/Navbar/Navbar';
 import Footer from '@/components/Shared/Footer/Footer/Footer';
 import { ToastContainer } from 'react-toastify';
+import ScrollToTop from '@/components/Shared/Utils/ScrollToTop';
 
 const Root = () => {
   return (
-    <div className="">
+    <div>
+      <ScrollToTop />
       <div className="sticky top-0 z-50">
         <Navbar />
       </div>

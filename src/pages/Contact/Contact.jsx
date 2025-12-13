@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   FaPhoneAlt,
@@ -8,16 +8,15 @@ import {
 } from 'react-icons/fa';
 
 const Contact = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0, 'smooth');
+  }, []);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const handleSusbmit = e => {
-    e.preventDefault();
-    alert('Message Sent! We will get back to you soon.');
-  };
   const onSubmit = data => {
     const { name, email, subject, message } = data;
     const body = `Hi Mahmud,\n\n${message}\n\n--\nName: ${name}\nEmail: ${email}`;

@@ -16,21 +16,22 @@ import useTitle from '@/hooks/useTitle';
 import TicketDetailsSkeleton from '@/components/Shared/Loader/TicketDetailsSkeleton';
 import useAuth from '@/hooks/useAuth';
 import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
+import RelevantTickets from '@/components/Cards/RelevantTickets';
+import { Bus, ChevronRight, Home } from 'lucide-react';
 
 const TicketDetails = () => {
   const { user, loading } = useAuth();
   const { id } = useParams();
-  const {
-    data: ticket,
-    isLoading,
-    error,
-    isError,
-    refetch,
-  } = useFetch(['ticket', id], `/tickets/${id}`, true);
+  const { data, isLoading, error, isError, refetch } = useFetch(
+    ['ticket', id],
+    `/tickets/${id}`,
+    true
+  );
+  const { result: ticket, relevantTickets } = data || {};
   useTitle(`Ticket Details - ${ticket?.title}`);
-
   const [isExpired, setIsExpired] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleExpire = status => {
     setIsExpired(status);
@@ -76,6 +77,48 @@ const TicketDetails = () => {
         <TicketDetailsSkeleton></TicketDetailsSkeleton>
       ) : (
         <div className="bg-base-100 rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
+            <div className="px-4 py-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              {/* <button
+                onClick={() => navigate(-1)}
+                className="group flex items-center gap-2.5 text-gray-500 hover:text-gray-900 transition-all"
+              >
+                <div className="p-2 rounded-full bg-gray-50 group-hover:bg-gray-200 border border-gray-100 transition-all">
+                  <ArrowLeft
+                    size={18}
+                    className="group-hover:-translate-x-1 transition-transform duration-300"
+                  />
+                </div>
+                <span className="font-semibold text-sm tracking-wide">
+                  Go Back
+                </span>
+              </button> */}
+              <nav className="flex items-center gap-2 text-sm text-gray-500 font-medium">
+                <Link
+                  to="/"
+                  className="hover:text-blue-600 flex items-center gap-1 transition-colors"
+                >
+                  <Home size={14} />
+                  <span className="hidden sm:inline">Home</span>
+                </Link>
+
+                <ChevronRight size={14} className="text-gray-300" />
+
+                <Link
+                  to="/all-tickets"
+                  className="hover:text-blue-600 flex items-center gap-1 transition-colors"
+                >
+                  <Bus size={14} />
+                  <span>Tickets</span>
+                </Link>
+
+                <ChevronRight size={14} className="text-gray-300" />
+                <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md truncate max-w-[150px] sm:max-w-xs">
+                  {ticket?.title}
+                </span>
+              </nav>
+            </div>
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="h-64 lg:h-full relative">
               <img
@@ -187,6 +230,8 @@ const TicketDetails = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
+      <RelevantTickets relevantTickets={relevantTickets}></RelevantTickets>
     </div>
   );
 };

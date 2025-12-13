@@ -156,14 +156,12 @@ const DashboardLayout = () => {
       <div className="drawer lg:drawer-open">
         <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
-          {/* Navbar */}
           <nav className="navbar w-full bg-base-300 sticky top-0 z-40">
             <label
               htmlFor="my-drawer-4"
               aria-label="open sidebar"
               className="btn btn-square btn-ghost"
             >
-              {/* Sidebar toggle icon */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -194,13 +192,13 @@ const DashboardLayout = () => {
           </div>
         </div>
 
-        <div className="drawer-side is-drawer-close:overflow-visible">
+        <div className="drawer-side is-drawer-close:overflow-visible z-50">
           <label
             htmlFor="my-drawer-4"
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64 is-drawer-close:pt-16 is-drawer-open:pt-0">
+          <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14  is-drawer-open:w-64 is-drawer-close:pt-16 is-drawer-open:pt-0">
             <ul className="menu w-full grow">
               <div className="mb-4 px-2 is-drawer-close:hidden">
                 <span className="badge badge-outline badge-primary w-full py-3 uppercase font-bold tracking-widest text-xs">

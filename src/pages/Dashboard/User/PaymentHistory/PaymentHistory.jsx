@@ -1,4 +1,5 @@
 import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
+import PaymentInvoice from '@/components/Shared/PaymentInvoice.jsx/PaymentInvoice';
 import useAuth from '@/hooks/useAuth';
 import useFetch from '@/hooks/useFetch';
 import React, { useState } from 'react';
@@ -19,6 +20,7 @@ const PaymentHistory = () => {
 
   console.log(transactionsData);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   const filteredTransactions = transactionsData?.filter(
     txn =>
@@ -101,7 +103,10 @@ const PaymentHistory = () => {
                     </td>
 
                     <td className="text-center">
-                      <button className="btn btn-ghost btn-xs text-base-content/50 hover:text-primary">
+                      <button
+                        onClick={() => setSelectedBooking(txn)}
+                        className="btn btn-ghost btn-xs text-base-content/50 hover:text-primary"
+                      >
                         <FaFileInvoiceDollar className="text-lg" />
                       </button>
                     </td>
@@ -126,6 +131,12 @@ const PaymentHistory = () => {
         Showing {filteredTransactions.length} records. All payments are secured
         by Stripe.
       </div>
+      {selectedBooking && (
+        <PaymentInvoice
+          booking={selectedBooking}
+          onClose={() => setSelectedBooking(null)}
+        />
+      )}
     </div>
   );
 };
