@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
 import { useMutation } from '@tanstack/react-query';
 import useAxios from '@/hooks/useAxios';
+import useTitle from '@/hooks/useTitle';
 
 const PaymentSuccess = () => {
+  useTitle('Payment Success');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const sessionId = searchParams.get('session_id');
@@ -63,10 +65,10 @@ const PaymentSuccess = () => {
       <p className="text-gray-500">Redirecting to your order history...</p>
 
       <button
-        onClick={() => navigate('/dashboard/my-percels')}
+        onClick={() => navigate('/dashboard/user/booked-tickets')}
         className="btn btn-primary"
       >
-        Go to My Percels
+        Go to My Tickets
       </button>
     </div>
   );

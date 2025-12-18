@@ -1,20 +1,10 @@
-import React, { useState, useEffect, use } from 'react';
-// Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
-// Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
 
 import { Pagination, Autoplay } from 'swiper/modules';
 
-import {
-  Heart,
-  Plane,
-  MapPin,
-  Briefcase,
-  SearchX,
-  RefreshCcw,
-} from 'lucide-react';
+import { SearchX } from 'lucide-react';
 import {
   FaBus,
   FaCalendarAlt,
@@ -29,17 +19,6 @@ import { Link, useNavigate } from 'react-router';
 
 const RelevantTickets = ({ relevantTickets: randomDeals }) => {
   const navigate = useNavigate();
-  // if (randomDeals?.length === 0)
-  //   return (
-  //     <div>
-  //       <div className="w-full py-10 flex flex-col items-center justify-center text-center bg-gray-50 rounded-xl border border-gray-100">
-  //         <SearchX size={32} className="text-gray-400 mb-2" />
-  //         <p className="text-gray-600 font-medium text-sm">
-  //           No alternative deals found right now.
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
   const getTransportStyle = type => {
     switch (type.toLowerCase()) {
       case 'bus':
@@ -91,7 +70,7 @@ const RelevantTickets = ({ relevantTickets: randomDeals }) => {
         className="mySwiper !pb-12"
       >
         {randomDeals?.length === 0 ? (
-          <div className="w-full py-10 flex flex-col items-center justify-center text-center bg-gray-50 rounded-xl border border-gray-100">
+          <div className="w-full py-10 flex flex-col items-center justify-center text-center bg-base-100 rounded-xl border border-gray-100">
             <SearchX size={32} className="text-gray-400 mb-2" />
             <p className="text-gray-600 font-medium text-sm">
               No Relevant Ticket found right now. Browse{' '}

@@ -10,16 +10,41 @@ import {
   FaEdit,
 } from 'react-icons/fa';
 import ProfileModal from './ProfileModal';
+import useTitle from '@/hooks/useTitle';
+import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
 
 const UserProfile = () => {
+  useTitle('Profile');
   const { user, loading } = useAuth();
-  const { data, isLoading, error } = useFetch(
+  const { data, isLoading, error, isError, refetch } = useFetch(
     ['user', user?.email],
     `/user/${user?.email}`
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (loading || isLoading) return <LoadingSpinner></LoadingSpinner>;
+
+  if (isError) {
+    const isNotFound = error?.response?.status === 404;
+    if (isNotFound) {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+          <div className="text-9xl mb-4">🎫</div>
+          <h2 className="text-3xl font-bold text-base-content mb-2">
+            Ticket Not Found
+          </h2>
+          <p className="text-base-content/60 mb-6 max-w-md">
+            The ticket you are looking for might have been removed or the link
+            is invalid.
+          </p>
+          <Link to="/all-tickets" className="btn btn-primary text-white">
+            Browse All Tickets
+          </Link>
+        </div>
+      );
+    }
+    return <DataFetchError error={error} refetch={refetch} />;
+  }
 
   return (
     <div className="w-full mx-auto">

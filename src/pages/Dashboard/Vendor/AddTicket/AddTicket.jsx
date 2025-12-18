@@ -1,16 +1,17 @@
-import SeatMap from '@/components/Shared/SeatMap';
 import useAuth from '@/hooks/useAuth';
 import useAxios from '@/hooks/useAxios';
 import useImage from '@/hooks/useImage';
+import useTitle from '@/hooks/useTitle';
 import { useMutation } from '@tanstack/react-query';
-import React, { useState, useTransition } from 'react';
+import React, { useTransition } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { FaBus, FaFileUpload, FaPaperPlane, FaUserTie } from 'react-icons/fa';
+import { FaPaperPlane, FaUserTie } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 
 const AddTicket = () => {
+  useTitle('Add Ticket');
   const {
     register,
     handleSubmit,

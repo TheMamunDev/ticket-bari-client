@@ -4,11 +4,12 @@ import { toast } from 'react-toastify';
 import useAuth from '@/hooks/useAuth';
 import { useForm } from 'react-hook-form';
 import SocialLogin from './SocialLogin';
-import { Spinner } from '@/components/ui/spinner';
 import { FaEye, FaEyeSlash, FaLock } from 'react-icons/fa';
+import useTitle from '@/hooks/useTitle';
 
 export default function Login() {
-  const { handleGoogleLogin, user, login } = useAuth();
+  useTitle('Login');
+  const { user, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';

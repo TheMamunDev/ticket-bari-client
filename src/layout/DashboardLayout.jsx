@@ -24,21 +24,17 @@ import {
 import useRole from '@/hooks/useRole';
 import useAuth from '@/hooks/useAuth';
 import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
+import useTitle from '@/hooks/useTitle';
 
 const DashboardLayout = () => {
+  useTitle('Dashboard');
   const { user: authUser, loading, logOut } = useAuth();
   const location = useLocation();
   const { role, roleLoading } = useRole();
-  const navigate = useNavigate();
 
   if (loading || roleLoading) {
     return <LoadingSpinner></LoadingSpinner>;
   }
-
-  const getPageTitle = () => {
-    const path = location.pathname.split('/').pop();
-    return path.replace(/-/g, ' ').toUpperCase();
-  };
 
   const renderSidebarLinks = () => {
     const activeClass = 'bg-primary text-primary-content font-bold';

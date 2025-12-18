@@ -1,21 +1,24 @@
 import BookedTicketCard from '@/components/Cards/BookedTicketCard';
+import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
 import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
 import useAuth from '@/hooks/useAuth';
 import useAxios from '@/hooks/useAxios';
 import useFetch from '@/hooks/useFetch';
+import useTitle from '@/hooks/useTitle';
 import { useMutation } from '@tanstack/react-query';
 import React from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import Swal from 'sweetalert2';
 
 const MyBookedTickets = () => {
+  useTitle('My Booked Tickets');
   const [searchParams] = useSearchParams();
   const { user, loading } = useAuth();
   const secureApi = useAxios();
   const page = Number(searchParams.get('page')) || 1;
   const navigate = useNavigate();
 
-  const { data, isLoading, error } = useFetch(
+  const { data, isLoading, error, isError, refetch } = useFetch(
     ['my-bookings', user?.email, page],
     `/bookings/${user.email}?page=${page}`,
     true
@@ -85,6 +88,26 @@ const MyBookedTickets = () => {
   };
 
   if (isLoading || loading) return <LoadingSpinner></LoadingSpinner>;
+  if (isError) {
+    const isNotFound = error?.response?.status === 404;
+    if (isNotFound) {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+          <div className="text-9xl mb-4">🎫</div>
+          <h2 className="text-3xl font-bold text-base-content mb-2">
+            Ticket Not Found
+          </h2>
+          <p className="text-base-content/60 mb-6 max-w-md">
+            There are something went wrong , please try again later.
+          </p>
+          <Link to="/" className="btn btn-primary text-white">
+            Go Home
+          </Link>
+        </div>
+      );
+    }
+    return <DataFetchError error={error} refetch={refetch} />;
+  }
 
   return (
     <div>

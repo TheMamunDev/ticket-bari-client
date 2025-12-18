@@ -1,7 +1,9 @@
+import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
 import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
 import useAuth from '@/hooks/useAuth';
 import useAxios from '@/hooks/useAxios';
 import useFetch from '@/hooks/useFetch';
+import useTitle from '@/hooks/useTitle';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { FaUserShield, FaStore, FaBan } from 'react-icons/fa';
@@ -9,10 +11,17 @@ import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 
 const ManageUsers = () => {
+  useTitle('Manage Users');
   const { user, loading } = useAuth();
   const secureApi = useAxios();
   const queryClient = useQueryClient();
-  const { data: users, isLoading, error } = useFetch(['all-users'], `/user`);
+  const {
+    data: users,
+    isLoading,
+    error,
+    isError,
+    refetch,
+  } = useFetch(['all-users'], `/user`);
 
   const updateData = useMutation({
     mutationFn: async data => {
@@ -58,7 +67,6 @@ const ManageUsers = () => {
       if (response?.updatedUser.modifiedCount) {
         Swal.fire('Marked!', 'Vendor has been marked as Fraud.', 'success');
         queryClient.setQueryData(['all-users'], oldData => {
-          console.log('cache data', oldData);
           return oldData.map(el =>
             el._id === data.user._id ? { ...el, isFraud: true } : el
           );
@@ -76,7 +84,6 @@ const ManageUsers = () => {
 
   const handleRole = (user, newRole) => {
     const newData = { user, status: newRole };
-    console.log(newData);
     updateData.mutate(newData);
   };
 
@@ -99,6 +106,26 @@ const ManageUsers = () => {
 
   if (isLoading || loading) return <LoadingSpinner></LoadingSpinner>;
 
+  if (isError) {
+    const isNotFound = error?.response?.status === 404;
+    if (isNotFound) {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+          <div className="text-9xl mb-4">🎫</div>
+          <h2 className="text-3xl font-bold text-base-content mb-2">
+            User Not Found
+          </h2>
+          <p className="text-base-content/60 mb-6 max-w-md">
+            There are something went wrong , no users found
+          </p>
+          <Link to="/" className="btn btn-primary text-white">
+            Go Home
+          </Link>
+        </div>
+      );
+    }
+    return <DataFetchError error={error} refetch={refetch} />;
+  }
   return (
     <div className="w-full">
       <div className="mb-8">

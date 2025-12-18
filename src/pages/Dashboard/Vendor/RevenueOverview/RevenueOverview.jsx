@@ -15,12 +15,12 @@ import {
 import { FaDollarSign, FaTicketAlt, FaBus } from 'react-icons/fa';
 import useFetch from '@/hooks/useFetch';
 import useAuth from '@/hooks/useAuth';
+import useTitle from '@/hooks/useTitle';
 
 const RevenueOverview = () => {
+  useTitle('Revenue Overview');
   const { user, loading: authLoading } = useAuth();
   const [stats, setStats] = useState(null);
-
-  console.log(stats);
 
   const {
     data: responseData,
@@ -56,7 +56,6 @@ const RevenueOverview = () => {
     { name: 'Pending', value: 40 },
     { name: 'Rejected', value: 10 },
   ];
-  console.log(pieData, ticketStatusData);
   return (
     <div className="w-full p-6 space-y-8">
       <div>
@@ -67,7 +66,6 @@ const RevenueOverview = () => {
       </div>
 
       <div className="stats shadow w-full bg-base-100 border border-base-200 mb-8 flex flex-col md:flex-row">
-        {/* Total Revenue */}
         <div className="stat place-items-center">
           <div className="stat-figure text-primary">
             <FaDollarSign className="text-3xl" />
@@ -79,7 +77,6 @@ const RevenueOverview = () => {
           <div className="stat-desc text-success">Lifetime Earnings</div>
         </div>
 
-        {/* Total Tickets Sold */}
         <div className="stat place-items-center">
           <div className="stat-figure text-secondary">
             <FaTicketAlt className="text-3xl" />

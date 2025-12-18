@@ -1,7 +1,9 @@
+import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
 import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
 import PaymentInvoice from '@/components/Shared/PaymentInvoice.jsx/PaymentInvoice';
 import useAuth from '@/hooks/useAuth';
 import useFetch from '@/hooks/useFetch';
+import useTitle from '@/hooks/useTitle';
 import React, { useState } from 'react';
 import {
   FaHistory,
@@ -11,11 +13,14 @@ import {
 } from 'react-icons/fa';
 
 const PaymentHistory = () => {
+  useTitle('Payment History');
   const { user, loading } = useAuth();
   const {
     data: transactionsData,
     isLoading,
     error,
+    isError,
+    refetch,
   } = useFetch(['payment-history', user.email], `/payment/${user.email}`, true);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,6 +33,26 @@ const PaymentHistory = () => {
   );
   if (isLoading || loading) {
     return <LoadingSpinner></LoadingSpinner>;
+  }
+  if (isError) {
+    const isNotFound = error?.response?.status === 404;
+    if (isNotFound) {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+          <div className="text-9xl mb-4">🎫</div>
+          <h2 className="text-3xl font-bold text-base-content mb-2">
+            No Payment Found
+          </h2>
+          <p className="text-base-content/60 mb-6 max-w-md">
+            There are something went wrong , please try again later.
+          </p>
+          <Link to="/" className="btn btn-primary text-white">
+            Home
+          </Link>
+        </div>
+      );
+    }
+    return <DataFetchError error={error} refetch={refetch} />;
   }
   return (
     <div className="w-full">

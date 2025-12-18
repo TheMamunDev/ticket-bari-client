@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react';
+import React from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
 import { FaPlus, FaBoxOpen } from 'react-icons/fa';
@@ -11,8 +11,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import useAxios from '@/hooks/useAxios';
 import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
+import useTitle from '@/hooks/useTitle';
 
 const MyAddedTickets = () => {
+  useTitle('My Added Tickets');
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -37,6 +39,7 @@ const MyAddedTickets = () => {
         return result;
       } catch (error) {
         console.log(error);
+        throw error;
       }
     },
     onSuccess: (res, data) => {
@@ -46,6 +49,9 @@ const MyAddedTickets = () => {
       if (data.data.deletedCount) {
         toast.success(`Successfully deleted the ticket`);
       }
+    },
+    onError: error => {
+      toast.error(error.response || 'something went wrong');
     },
   });
 

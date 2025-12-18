@@ -4,15 +4,8 @@ import useAxios from '@/hooks/useAxios';
 import useFetch from '@/hooks/useFetch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import {
-  FaCheck,
-  FaTimes,
-  FaUser,
-  FaTicketAlt,
-  FaSearch,
-} from 'react-icons/fa';
+import { FaCheck, FaTimes, FaUser, FaTicketAlt } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
 
 const RequestedBookings = () => {
   const { user, loading } = useAuth();
@@ -38,7 +31,6 @@ const RequestedBookings = () => {
       }
     },
     onSuccess: (res, data) => {
-      console.log(data, res);
       if (res.data.result.modifiedCount) {
         const message =
           data.status === 'accepted'
@@ -49,7 +41,6 @@ const RequestedBookings = () => {
         });
       }
       queryClient.setQueryData(['booked-tickets', user.email], oldData => {
-        console.log(oldData);
         return oldData.map(el =>
           el._id === data.id ? { ...el, status: data.status } : el
         );

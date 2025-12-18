@@ -1,13 +1,16 @@
+import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
 import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
 import useAuth from '@/hooks/useAuth';
 import useAxios from '@/hooks/useAxios';
 import useFetch from '@/hooks/useFetch';
+import useTitle from '@/hooks/useTitle';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
-import { FaCheck, FaTimes, FaMapMarkerAlt, FaUserTie } from 'react-icons/fa';
+import React from 'react';
+import { FaCheck, FaTimes, FaUserTie } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 const ManageTickets = () => {
+  useTitle('Manage Tickets');
   const { user, loading } = useAuth();
   const secureApi = useAxios();
   const queryClient = useQueryClient();
@@ -15,6 +18,8 @@ const ManageTickets = () => {
     data: tickets,
     isLoading,
     error,
+    isError,
+    refetch,
   } = useFetch(['all-tickets-manage'], `/tickets/all`, true);
 
   const updateData = useMutation({
@@ -24,19 +29,24 @@ const ManageTickets = () => {
         return res.data;
       } catch (error) {
         console.log(error);
+        throw error;
       }
     },
     onSuccess: (response, data) => {
-      console.log(response, data);
+      // console.log(response, data);
       if (response.modifiedCount) {
         toast.success('Ticket Updated Successfully');
       }
       queryClient.setQueryData(['all-tickets-manage'], oldData => {
-        console.log(oldData);
+        // console.log(oldData);
         return oldData.map(el =>
           el._id === data.id ? { ...el, status: data.status } : el
         );
       });
+    },
+    onError: error => {
+      console.log(error);
+      toast.error(error.response.data.message);
     },
   });
 
@@ -46,6 +56,26 @@ const ManageTickets = () => {
   };
 
   if (isLoading || loading) return <LoadingSpinner></LoadingSpinner>;
+  if (isError) {
+    const isNotFound = error?.response?.status === 404;
+    if (isNotFound) {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+          <div className="text-9xl mb-4">🎫</div>
+          <h2 className="text-3xl font-bold text-base-content mb-2">
+            Ticket Not Found
+          </h2>
+          <p className="text-base-content/60 mb-6 max-w-md">
+            There are something went wrong , no tickets found
+          </p>
+          <Link to="/" className="btn btn-primary text-white">
+            Go to home
+          </Link>
+        </div>
+      );
+    }
+    return <DataFetchError error={error} refetch={refetch} />;
+  }
 
   return (
     <div className="w-full">

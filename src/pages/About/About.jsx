@@ -7,8 +7,10 @@ import {
   FaAward,
   FaUserShield,
 } from 'react-icons/fa';
+import useTitle from '@/hooks/useTitle';
 
 const About = () => {
+  useTitle('About Us');
   return (
     <div className="bg-base-100 min-h-screen max-w-11/12 mx-auto">
       <div className="relative h-[400px]">

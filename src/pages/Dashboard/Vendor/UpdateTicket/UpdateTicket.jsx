@@ -10,8 +10,10 @@ import useAxios from '@/hooks/useAxios';
 import { toast } from 'react-toastify';
 import useImage from '@/hooks/useImage';
 import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
+import useTitle from '@/hooks/useTitle';
 
 const UpdateTicket = () => {
+  useTitle('Update Ticket');
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, loading } = useAuth();
@@ -44,6 +46,7 @@ const UpdateTicket = () => {
         return result;
       } catch (error) {
         console.log(error);
+        throw error;
       }
     },
     onSuccess: (data, postData) => {
@@ -57,6 +60,9 @@ const UpdateTicket = () => {
         );
       });
     },
+    onError: error => {
+      toast.error(error.response.data.message || 'Something went wrong');
+    },
   });
 
   const onSubmit = async data => {
@@ -64,7 +70,6 @@ const UpdateTicket = () => {
       if (data.image[0]) {
         setImg(await useImage(data.image[0]));
       }
-      // const imageURL = await useImage(data.image[0]);
       const newData = {
         ...fetchedData,
         ...data,

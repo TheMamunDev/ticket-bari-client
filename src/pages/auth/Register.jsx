@@ -8,10 +8,10 @@ import SocialLogin from './SocialLogin';
 import axios from 'axios';
 import { handleFirebaseError } from '@/lib/utils/firebaseErrorHandle';
 import useImage from '@/hooks/useImage';
-import { use, useState, useTransition } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Spinner } from '@/components/ui/spinner';
+import { useState, useTransition } from 'react';
+
 import { FaEye, FaEyeSlash, FaLock } from 'react-icons/fa';
+import useTitle from '@/hooks/useTitle';
 
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
@@ -39,6 +39,7 @@ const schema = z.object({
 });
 
 const Register = () => {
+  useTitle('Register');
   const { signUp, updateUserProfile } = useAuth();
   const apiUrl = `${import.meta.env.VITE_BASE_URL}`;
   const {

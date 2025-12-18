@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TicketCard from '../../components/Cards/TicketCard';
-import { FaFilter, FaSearch } from 'react-icons/fa';
 import useFetch from '@/hooks/useFetch';
-import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
 import SearchForm from '@/components/Shared/SearchForm/SearchForm';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import TicketCardSkeleton from '@/components/Shared/Loader/TicketCardSkeleton';
@@ -45,7 +43,6 @@ const AllTickets = () => {
 
   const handleSortChange = value => {
     const params = new URLSearchParams(searchParams);
-    console.log(params);
     if (value) params.set('sort', value);
     else params.delete('sort');
 

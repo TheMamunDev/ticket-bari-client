@@ -1,3 +1,4 @@
+import useTitle from '@/hooks/useTitle';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -8,6 +9,7 @@ import {
 } from 'react-icons/fa';
 
 const Contact = () => {
+  useTitle('Contact Us');
   useEffect(() => {
     window.scrollTo(0, 0, 'smooth');
   }, []);

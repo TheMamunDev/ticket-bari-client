@@ -1,14 +1,17 @@
+import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
 import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
 import useAuth from '@/hooks/useAuth';
 import useAxios from '@/hooks/useAxios';
 import useFetch from '@/hooks/useFetch';
+import useTitle from '@/hooks/useTitle';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { FaBullhorn, FaCheck, FaTimes } from 'react-icons/fa';
 import Swal from 'sweetalert2';
-import { is } from 'zod/v4/locales';
+import { is, th } from 'zod/v4/locales';
 
 const AdvertiesTickets = () => {
+  useTitle('Advertise Tickets');
   const { user, loading } = useAuth();
   const secureApi = useAxios();
   const queryClient = useQueryClient();
@@ -16,6 +19,8 @@ const AdvertiesTickets = () => {
     data: tickets,
     isLoading,
     error,
+    isError,
+    refetch,
   } = useFetch(['all-tickets-adverties'], `/tickets/all`, true, {
     status: 'approved',
   });
@@ -32,19 +37,22 @@ const AdvertiesTickets = () => {
         return res.data;
       } catch (error) {
         console.log(error);
+        throw error;
       }
     },
     onSuccess: (response, data) => {
-      console.log(response, data);
       if (response.modifiedCount) {
         toast.success('Ticket Updated Successfully');
       }
       queryClient.setQueryData(['all-tickets-adverties'], oldData => {
-        console.log(oldData);
         return oldData.map(el =>
           el._id === data.id ? { ...el, isAdvertised: data.currentStatus } : el
         );
       });
+    },
+    onError: error => {
+      console.log(error);
+      toast.error(error.message || 'Something went wrong');
     },
   });
 
@@ -63,6 +71,27 @@ const AdvertiesTickets = () => {
     updateData.mutate(newData);
   };
   if (isLoading || loading) return <LoadingSpinner></LoadingSpinner>;
+
+  if (isError) {
+    const isNotFound = error?.response?.status === 404;
+    if (isNotFound) {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+          <div className="text-9xl mb-4">🎫</div>
+          <h2 className="text-3xl font-bold text-base-content mb-2">
+            Adverties Tickets Not Found
+          </h2>
+          <p className="text-base-content/60 mb-6 max-w-md">
+            There are something went wrong , please try again later.
+          </p>
+          <Link to="/" className="btn btn-primary text-white">
+            Home
+          </Link>
+        </div>
+      );
+    }
+    return <DataFetchError error={error} refetch={refetch} />;
+  }
 
   return (
     <div className="w-full">

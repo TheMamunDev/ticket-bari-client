@@ -19,8 +19,6 @@ const BookedTicketCard = ({ booking, onPay }) => {
   const [isExpired, setIsExpired] = useState(false);
   const queryClient = useQueryClient();
 
-  // console.log('booking ', booking);
-
   const getStatusBadge = status => {
     switch (status) {
       case 'pending':
