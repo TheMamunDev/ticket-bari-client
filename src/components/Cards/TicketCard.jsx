@@ -16,6 +16,11 @@ import {
 } from 'react-icons/fa';
 
 const TicketCard = ({ ticket }) => {
+  const perksArray = Array.isArray(ticket.perks)
+    ? ticket.perks
+    : ticket.perks
+    ? [ticket.perks]
+    : [];
   const getTransportStyle = type => {
     switch (type.toLowerCase()) {
       case 'bus':
@@ -86,7 +91,7 @@ const TicketCard = ({ ticket }) => {
         </div>
 
         <div className="flex flex-wrap gap-2 mb-4">
-          {ticket.perks.slice(0, 3).map((perk, index) => (
+          {perksArray.slice(0, 3).map((perk, index) => (
             <div
               key={index}
               className="badge badge-outline badge-xs gap-1 py-2"
