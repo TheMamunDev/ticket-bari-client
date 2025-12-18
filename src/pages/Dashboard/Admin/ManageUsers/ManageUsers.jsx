@@ -21,7 +21,7 @@ const ManageUsers = () => {
     error,
     isError,
     refetch,
-  } = useFetch(['all-users'], `/user`);
+  } = useFetch(['all-users'], `/user`, true);
 
   const updateData = useMutation({
     mutationFn: async data => {
