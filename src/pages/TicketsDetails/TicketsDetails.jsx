@@ -48,6 +48,12 @@ const TicketDetails = () => {
     setIsModalOpen(true);
   };
 
+  const perksArray = Array.isArray(ticket?.perks)
+    ? ticket?.perks
+    : ticket?.perks
+    ? [ticket?.perks]
+    : [];
+
   if (loading) return <LoadingSpinner></LoadingSpinner>;
   if (isError) {
     const isNotFound = error?.response?.status === 404;
@@ -152,7 +158,7 @@ const TicketDetails = () => {
 
                   <h3 className="font-bold text-lg mb-2">Perks</h3>
                   <div className="flex flex-wrap gap-2">
-                    {ticket?.perks.map((perk, i) => (
+                    {perksArray.map((perk, i) => (
                       <div key={i} className="badge badge-outline p-3">
                         {perk === 'AC' && (
                           <FaSnowflake className="mr-1 text-cyan-500" />
