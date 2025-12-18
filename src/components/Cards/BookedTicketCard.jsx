@@ -6,10 +6,20 @@ import {
   FaCreditCard,
 } from 'react-icons/fa';
 import CountDown from '../Shared/CountDown/CountDown';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
+import Swal from 'sweetalert2';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
+import useAxios from '@/hooks/useAxios';
 
 const BookedTicketCard = ({ booking, onPay }) => {
+  const [searchParams] = useSearchParams();
+  const page = Number(searchParams.get('page')) || 1;
+  const secureApi = useAxios();
   const [isExpired, setIsExpired] = useState(false);
+  const queryClient = useQueryClient();
+
+  // console.log('booking ', booking);
 
   const getStatusBadge = status => {
     switch (status) {
@@ -26,14 +36,55 @@ const BookedTicketCard = ({ booking, onPay }) => {
     }
   };
 
-  const checkInitialExpiration = () => {
-    const departureStr = `${booking.departureDate} ${booking.departureTime}`;
-    const departureDate = new Date(departureStr);
-    return new Date() > departureDate;
-  };
-
   const handleTimerExpire = status => {
     setIsExpired(status);
+  };
+
+  console.log(booking.userEmail);
+
+  const deleteTicket = useMutation({
+    mutationFn: async id => {
+      try {
+        const result = await secureApi.delete(`/bookings/${id}`);
+        return result;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    onSuccess: (res, bookingId) => {
+      console.log(bookingId);
+      if (res.data.deletedCount) {
+        toast.success('Successfully deleted the ticket');
+        queryClient.setQueryData(
+          ['my-bookings', booking.userEmail, page],
+          prevData => {
+            if (!prevData) return prevData;
+            return {
+              ...prevData,
+              result: prevData.result.filter(item => item._id !== bookingId),
+              totalItems: prevData.totalItems - 1,
+            };
+          }
+        );
+      }
+    },
+  });
+
+  const handleDelete = ticket => {
+    console.log(ticket);
+    Swal.fire({
+      title: `Are you sure you want to delete "${ticket.ticketTitle}"?`,
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#40916c',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then(result => {
+      if (result.isConfirmed) {
+        deleteTicket.mutate(ticket._id);
+      }
+    });
   };
 
   const isPayEnabled = booking.status === 'accepted' && !isExpired;
@@ -50,7 +101,7 @@ const BookedTicketCard = ({ booking, onPay }) => {
           {getStatusBadge(booking.status)}
         </div>
         <div className="absolute bottom-2 left-2 badge badge-neutral bg-opacity-80 text-white">
-          Qty: {booking.bookingQuantity}
+          Qty: {booking.quantity}
         </div>
       </figure>
 
@@ -71,9 +122,9 @@ const BookedTicketCard = ({ booking, onPay }) => {
 
         <div className="flex items-center gap-2 text-sm bg-base-200 p-2 rounded-lg mb-3">
           <FaMapMarkerAlt className="text-secondary" />
-          <span className="font-semibold">{booking.from}</span>
+          <span className="font-semibold">{booking.ticketInfo.from}</span>
           <span>→</span>
-          <span className="font-semibold">{booking.to}</span>
+          <span className="font-semibold">{booking.ticketInfo.to}</span>
         </div>
 
         <div className="flex justify-between text-xs text-base-content/70 mb-4">
@@ -113,23 +164,35 @@ const BookedTicketCard = ({ booking, onPay }) => {
             <span>Booking request was rejected by vendor.</span>
           </div>
         )}
-        <div className="card-actions mt-auto">
-          {booking.status === 'accepted' && (
-            <button
-              onClick={() => onPay(booking)}
-              disabled={!isPayEnabled}
-              className="btn btn-primary w-full text-white btn-sm"
-            >
-              <FaCreditCard />
-              {isExpired ? 'Expired' : 'Pay Now'}
-            </button>
-          )}
+        <div className="card-actions mt-auto flex flex-col md:flex-row justify-center gap-2">
+          <div className="flex-1 w-full">
+            {booking.status === 'accepted' && (
+              <button
+                onClick={() => onPay(booking)}
+                disabled={!isPayEnabled}
+                className="btn btn-primary w-full text-white btn-sm"
+              >
+                <FaCreditCard />
+                {isExpired ? 'Expired' : 'Pay Now'}
+              </button>
+            )}
+            {booking.status === 'pending' && (
+              <button className="btn btn-ghost btn-sm w-full cursor-default border-base-300 bg-base-200">
+                Waiting for Approval
+              </button>
+            )}
+          </div>
 
-          {booking.status === 'pending' && (
-            <button className="btn btn-ghost btn-sm w-full cursor-default border-base-300 bg-base-200">
-              Waiting for Approval
-            </button>
-          )}
+          <div className="flex-1 w-full">
+            {booking.status === 'pending' && (
+              <button
+                onClick={() => handleDelete(booking)}
+                className="btn btn-warning w-full text-white btn-sm"
+              >
+                Delete
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

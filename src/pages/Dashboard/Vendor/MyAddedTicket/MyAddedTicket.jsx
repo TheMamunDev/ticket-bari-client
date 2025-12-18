@@ -10,6 +10,7 @@ import LoadingSpinner from '@/components/Shared/Loader/LoadingSpinner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import useAxios from '@/hooks/useAxios';
+import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
 
 const MyAddedTickets = () => {
   const { user, loading } = useAuth();
@@ -21,6 +22,8 @@ const MyAddedTickets = () => {
     data: initialTickets,
     isLoading,
     error,
+    isError,
+    refetch,
   } = useFetch(
     ['my-added-tickets', user.email],
     `/tickets/vendor/${user.email}`,
@@ -37,7 +40,6 @@ const MyAddedTickets = () => {
       }
     },
     onSuccess: (res, data) => {
-      console.log(data, res);
       queryClient.setQueryData(['my-added-tickets', user?.email], prevData => {
         return prevData.filter(item => item._id !== data);
       });
@@ -48,7 +50,7 @@ const MyAddedTickets = () => {
   });
 
   const handleDelete = ticket => {
-    console.log(ticket);
+    console.log(queryClient);
     Swal.fire({
       title: `Are you sure you want to delete "${ticket.title}"?`,
       text: "You won't be able to revert this!",
@@ -72,6 +74,10 @@ const MyAddedTickets = () => {
   };
 
   if (loading || isLoading) return <LoadingSpinner></LoadingSpinner>;
+
+  if (isError) {
+    return <DataFetchError error={error} refetch={refetch} />;
+  }
 
   return (
     <div className="w-full">

@@ -11,7 +11,7 @@ import useImage from '@/hooks/useImage';
 import { use, useState, useTransition } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaLock } from 'react-icons/fa';
 
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
@@ -94,79 +94,126 @@ const Register = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-8">
-      <h2 className="text-2xl font-bold mb-4">Register</h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <input
-          type="text"
-          {...register('name')}
-          placeholder="Name"
-          className="input w-full"
-        />
-        {errors.name && (
-          <p className="text-red-500 text-sm">{errors.name.message}</p>
-        )}
-        <input
-          {...register('email')}
-          placeholder="Email"
-          className="input w-full"
-        />
-        {errors.email && (
-          <p className="text-red-500 text-sm">{errors.email.message}</p>
-        )}
-        <div className="relative">
-          <input
-            type={showPassword ? 'text' : 'password'}
-            {...register('password')}
-            placeholder="Password"
-            className="input w-full pr-12"
-          />
+    <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
+      <div className="w-full max-w-4xl bg-base-100 rounded-2xl shadow-2xl grid grid-cols-1 md:grid-cols-2 overflow-hidden my-4">
+        <div className="hidden md:flex flex-col justify-center bg-primary text-white p-10">
+          <h1 className="text-4xl font-extrabold mb-4">Create Your Account</h1>
+          <p className="opacity-90 text-lg">
+            Join our platform to book tickets, manage trips, and access trusted
+            vendors across Bus, Train, Launch & Plane.
+          </p>
 
-          <span
-            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-600"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </span>
+          <div className="mt-8 space-y-3 text-sm opacity-90">
+            <p>✔ Fast & secure registration</p>
+            <p>✔ Easy booking management</p>
+          </div>
         </div>
+        <div className="p-8 md:p-10">
+          <h2 className="text-3xl font-bold mb-2 text-base-content">
+            Register
+          </h2>
+          <p className="text-sm text-base-content/60 mb-6">
+            Create an account to get started
+          </p>
 
-        {errors.password && (
-          <p className="text-red-500 text-sm">{errors.password.message}</p>
-        )}
-        <label className="label">Photo </label>
-        <input
-          {...register('photoURL')}
-          className="file-input w-full"
-          name="photoURL"
-          type="file"
-          accept="image/*"
-        />
-        {errors.photoURL && (
-          <p className="text-red-400">{errors.photoURL.message}</p>
-        )}
-        <div></div>
-        <button
-          disabled={transition}
-          className="btn btn-primary w-full disabled:bg-primary disabled:text-white"
-          type="submit"
-        >
-          {transition ? (
-            <>
-              <Spinner />
-              Creating Account....
-            </>
-          ) : (
-            'Create Account'
-          )}
-        </button>
-      </form>
-      <SocialLogin></SocialLogin>
-      <p className="mt-2">
-        Already have an account?{' '}
-        <Link to="/login" className="link">
-          Login here
-        </Link>
-      </p>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="form-control">
+              <label className="label font-semibold">Full Name</label>
+              <input
+                type="text"
+                {...register('name')}
+                placeholder="Your full name"
+                className="input input-bordered w-full"
+              />
+              {errors.name && (
+                <span className="text-error text-xs mt-1">
+                  {errors.name.message}
+                </span>
+              )}
+            </div>
+            <div className="form-control">
+              <label className="label font-semibold">Email</label>
+              <input
+                type="email"
+                {...register('email')}
+                placeholder="you@example.com"
+                className="input input-bordered w-full"
+              />
+              {errors.email && (
+                <span className="text-error text-xs mt-1">
+                  {errors.email.message}
+                </span>
+              )}
+            </div>
+            <div className="form-control relative">
+              <label className="label font-semibold">Password</label>
+              <label className="input validator border border-gray-200 w-full">
+                <FaLock size={18} className="text-gray-500 " />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  {...register('password')}
+                  required
+                  className="input-field input-bordered"
+                  placeholder="Create a strong password"
+                />
+                <button
+                  className="text-base-600"
+                  onClick={e => {
+                    e.preventDefault();
+                    setShowPassword(!showPassword);
+                  }}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </label>
+
+              {errors.password && (
+                <span className="text-error text-xs mt-1">
+                  {errors.password.message}
+                </span>
+              )}
+            </div>
+            <div className="form-control">
+              <label className="label font-semibold">Profile Photo</label>
+              <input
+                {...register('photoURL')}
+                className="file-input file-input-bordered w-full"
+                type="file"
+                accept="image/*"
+              />
+              {errors.photoURL && (
+                <span className="text-error text-xs mt-1">
+                  {errors.photoURL.message}
+                </span>
+              )}
+            </div>
+            <button
+              disabled={transition}
+              className="btn btn-primary w-full text-white gap-2 disabled:bg-primary disabled:opacity-70"
+              type="submit"
+            >
+              {transition ? (
+                <>
+                  <span className="loading loading-spinner loading-sm"></span>
+                  Creating Account...
+                </>
+              ) : (
+                'Create Account'
+              )}
+            </button>
+          </form>
+          <div className="mt-6">
+            <SocialLogin />
+          </div>
+
+          <p className="mt-6 text-center text-sm">
+            Already have an account?{' '}
+            <Link to="/login" className="link link-primary font-semibold">
+              Login here
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

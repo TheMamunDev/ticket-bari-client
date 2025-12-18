@@ -28,8 +28,6 @@ const RequestedBookings = () => {
     true
   );
 
-
-
   const updateData = useMutation({
     mutationFn: async data => {
       try {
@@ -66,7 +64,6 @@ const RequestedBookings = () => {
   if (loading || isLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div className="w-full">
-      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <div>
           <h2 className="text-3xl font-bold text-base-content">
@@ -99,7 +96,6 @@ const RequestedBookings = () => {
                 <th className="text-center">Action</th>
               </tr>
             </thead>
-
             <tbody>
               {bookings.length > 0 ? (
                 bookings.map((booking, index) => (

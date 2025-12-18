@@ -18,7 +18,6 @@ const PaymentHistory = () => {
     error,
   } = useFetch(['payment-history', user.email], `/payment/${user.email}`, true);
 
-  console.log(transactionsData);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBooking, setSelectedBooking] = useState(null);
 

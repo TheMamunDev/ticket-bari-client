@@ -1,14 +1,26 @@
 import React from 'react';
 import jsPDF from 'jspdf';
 import { FaDownload, FaTimes } from 'react-icons/fa';
+import useFetch from '@/hooks/useFetch';
 
 const PaymentInvoice = ({ booking, onClose }) => {
-  // ---------- SAFE TEXT HELPER ----------
+  console.log(booking);
+  const { data, isLoading } = useFetch(
+    ['payment-invoice', booking.transactionId],
+    `/payment/${booking._id}/invoice`,
+    true
+  );
+  const quantity = data?.amount / data?.ticketInfo?.price;
+  console.log(data);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   const safeText = value =>
     value !== undefined && value !== null ? String(value) : '';
 
   const handleDownloadPdf = () => {
-    if (!booking) {
+    if (!booking || !data) {
       alert('Booking data not available');
       return;
     }
@@ -16,7 +28,6 @@ const PaymentInvoice = ({ booking, onClose }) => {
     const pdf = new jsPDF('p', 'mm', 'a4');
     let y = 20;
 
-    // ---------- HEADER ----------
     pdf.setFontSize(22);
     pdf.setTextColor(37, 99, 235);
     pdf.text('TicketBari', 20, y);
@@ -33,12 +44,10 @@ const PaymentInvoice = ({ booking, onClose }) => {
       align: 'right',
     });
 
-    // Divider
     y += 6;
     pdf.setDrawColor(220);
     pdf.line(20, y, 190, y);
 
-    // ---------- BILL TO ----------
     y += 10;
     pdf.setFontSize(11);
     pdf.setTextColor(0);
@@ -46,38 +55,37 @@ const PaymentInvoice = ({ booking, onClose }) => {
 
     y += 6;
     pdf.setFontSize(10);
-    pdf.text(safeText(booking.userName), 20, y);
+    pdf.text(safeText(data.userName), 20, y);
     y += 5;
-    pdf.text(safeText(booking.userEmail), 20, y);
+    pdf.text(safeText(data.userEmail), 20, y);
 
-    // ---------- INVOICE INFO ----------
-    pdf.text(
-      safeText(`Invoice #: ${booking.transactionId || 'N/A'}`),
-      120,
-      y - 5
-    );
-    pdf.text(safeText(`Payment: ${booking.paymentMethod || 'Online'}`), 120, y);
+    pdf.text(safeText(`Invoice #: ${data.transactionId || 'N/A'}`), 120, y - 5);
+    pdf.text(safeText(`Payment: ${data.paymentMethod || 'Online'}`), 120, y);
 
-    // ---------- JOURNEY ----------
     y += 12;
     pdf.setFontSize(11);
     pdf.text('Journey Details:', 20, y);
 
     y += 6;
     pdf.setFontSize(10);
-    pdf.text(safeText(`Route: ${booking.from} → ${booking.to}`), 20, y);
+    pdf.text(
+      safeText(`Route: ${data.ticketInfo.from} → ${data.ticketInfo.to}`),
+      20,
+      y
+    );
     y += 5;
     pdf.text(
       safeText(
-        `Departure: ${booking.departureDate} ${booking.departureTime || ''}`
+        `Departure: ${data.ticketInfo.departureDate} ${
+          data.ticketInfo.departureTime || ''
+        }`
       ),
       20,
       y
     );
     y += 5;
-    pdf.text(safeText(`Bus: ${booking.ticketTitle}`), 20, y);
+    pdf.text(safeText(`Bus: ${data.ticketTitle}`), 20, y);
 
-    // ---------- TABLE HEADER ----------
     y += 12;
     pdf.setFontSize(10);
     pdf.setFillColor(240, 240, 240);
@@ -88,31 +96,29 @@ const PaymentInvoice = ({ booking, onClose }) => {
     pdf.text('Price', 135, y);
     pdf.text('Total', 165, y);
 
-    // ---------- TABLE ROW ----------
     y += 10;
     pdf.setFillColor(255, 255, 255);
     pdf.rect(20, y - 5, 170, 10);
 
     pdf.text('Bus Ticket Fare', 22, y);
-    pdf.text(safeText(booking.quantity), 110, y);
-    pdf.text(safeText(`$${booking.unitPrice}`), 135, y);
-    pdf.text(safeText(`$${booking.totalPrice}`), 165, y);
+    pdf.text(safeText(quantity), 110, y);
+    pdf.text(safeText(`$${data.amount / quantity}`), 135, y);
+    pdf.text(safeText(`$${data.amount}`), 165, y);
 
-    // ---------- TOTAL ----------
     y += 14;
     pdf.setFontSize(11);
     pdf.text('Subtotal:', 130, y);
-    pdf.text(safeText(`$${booking.totalPrice}`), 165, y);
+    pdf.text(safeText(`$${data.amount}`), 165, y);
 
-    y += 6;
-    pdf.text('Tax (5%):', 130, y);
-    pdf.text(safeText(`$${(booking.totalPrice * 0.05).toFixed(2)}`), 165, y);
+    // y += 6;
+    // pdf.text('Tax (5%):', 130, y);
+    // pdf.text(safeText(`$${(booking.amount * 0.05).toFixed(2)}`), 165, y);
 
-    y += 8;
-    pdf.setFontSize(13);
-    pdf.setTextColor(37, 99, 235);
-    pdf.text('Total Paid:', 130, y);
-    pdf.text(safeText(`$${(booking.totalPrice * 1.05).toFixed(2)}`), 165, y);
+    // y += 8;
+    // pdf.setFontSize(13);
+    // pdf.setTextColor(37, 99, 235);
+    // pdf.text('Total Paid:', 130, y);
+    // pdf.text(safeText(`$${(booking.amount * 1.05).toFixed(2)}`), 165, y);
 
     y += 18;
     pdf.setFontSize(9);
@@ -124,7 +130,7 @@ const PaymentInvoice = ({ booking, onClose }) => {
       { align: 'center' }
     );
 
-    pdf.save(`TicketBari-Invoice-${booking.transactionId || 'invoice'}.pdf`);
+    pdf.save(`TicketBari-Invoice-${data.transactionId || 'invoice'}.pdf`);
   };
 
   return (

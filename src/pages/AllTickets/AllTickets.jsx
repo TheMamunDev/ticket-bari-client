@@ -112,7 +112,7 @@ const AllTickets = () => {
           </div>
         </div>
         <div className="my-14">
-          <SearchForm type={data?.categories}></SearchForm>
+          <SearchForm></SearchForm>
         </div>
 
         <div>

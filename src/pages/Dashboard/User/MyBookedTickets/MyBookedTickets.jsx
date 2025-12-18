@@ -16,7 +16,7 @@ const MyBookedTickets = () => {
   const navigate = useNavigate();
 
   const { data, isLoading, error } = useFetch(
-    ['my-bookings', user.email, page],
+    ['my-bookings', user?.email, page],
     `/bookings/${user.email}?page=${page}`,
     true
   );
@@ -36,11 +36,20 @@ const MyBookedTickets = () => {
         return res.data;
       } catch (error) {
         console.log(error);
+        throw error;
       }
     },
     onSuccess: (response, data) => {
       Swal.close();
       window.location.href = response.url;
+    },
+    onError: error => {
+      Swal.close();
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.response.data.message,
+      });
     },
   });
   const handlePayNow = async booking => {
@@ -49,11 +58,12 @@ const MyBookedTickets = () => {
       ticketTitle: booking.ticketTitle,
       totalPrice: booking.totalPrice,
       quantity: booking.quantity,
+      bookedSeat: booking.bookedSeat,
+      transportType: booking.ticketInfo.transportType,
       userEmail: user.email,
+      userName: user.displayName,
       ticketId: booking.ticketId,
     };
-    console.log(newData);
-
     const result = await Swal.fire({
       title: 'Proceed to Payment?',
       text: 'You will be redirected to Stripe checkout.',

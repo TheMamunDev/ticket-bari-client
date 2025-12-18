@@ -1,9 +1,10 @@
+import SeatMap from '@/components/Shared/SeatMap';
 import useAuth from '@/hooks/useAuth';
 import useAxios from '@/hooks/useAxios';
 import useImage from '@/hooks/useImage';
 import { useMutation } from '@tanstack/react-query';
 import React, { useState, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { FaBus, FaFileUpload, FaPaperPlane, FaUserTie } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -15,7 +16,13 @@ const AddTicket = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = useForm();
+
+  const transportTypeWatch = useWatch({
+    control,
+    name: 'transportType',
+  });
   const navigate = useNavigate();
   const secureApi = useAxios();
   const { user, loading: authLoading } = useAuth();
@@ -169,20 +176,37 @@ const AddTicket = () => {
                 </select>
               </div>
 
-              <div className="form-control">
-                <label className="label font-semibold">
-                  Total Seats Available
-                </label>
-                <input
-                  type="number"
-                  placeholder="e.g. 40"
-                  className="input input-bordered w-full"
-                  {...register('quantity', {
-                    required: 'Quantity is required',
-                    min: 1,
-                  })}
-                />
-              </div>
+              {transportTypeWatch === 'Bus' ? (
+                <div className="form-control">
+                  <label className="label font-semibold">
+                    Enter Bus Total Seat
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 40"
+                    className="input input-bordered w-full"
+                    {...register('quantity', {
+                      required: 'Quantity is required',
+                      min: 1,
+                    })}
+                  />
+                </div>
+              ) : (
+                <div className="form-control">
+                  <label className="label font-semibold">
+                    Total Seats Available
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 40"
+                    className="input input-bordered w-full"
+                    {...register('quantity', {
+                      required: 'Quantity is required',
+                      min: 1,
+                    })}
+                  />
+                </div>
+              )}
 
               <div className="form-control">
                 <label className="label font-semibold">Price (Per Unit)</label>

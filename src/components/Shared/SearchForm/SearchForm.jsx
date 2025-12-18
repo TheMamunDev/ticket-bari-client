@@ -6,11 +6,15 @@ import {
   FaCalendarAlt,
   FaExchangeAlt,
 } from 'react-icons/fa';
+import useFetch from '@/hooks/useFetch';
 
-const SearchForm = ({ redirectTo, type = [] }) => {
+const SearchForm = ({ redirectTo }) => {
   const navigate = useNavigate();
-
   const [searchParams, setSearchParams] = useSearchParams();
+  const { data, isLoading } = useFetch(
+    ['ticket-transport-type'],
+    '/tickets/transport'
+  );
 
   const [from, setFrom] = useState('');
   const [transfort, setTransfort] = useState('');
@@ -95,7 +99,7 @@ const SearchForm = ({ redirectTo, type = [] }) => {
               onChange={e => setTransfort(e.target.value)}
             >
               <option value="All">All</option>
-              {type.map(item => (
+              {data?.map(item => (
                 <option key={item} value={item}>
                   {item}
                 </option>

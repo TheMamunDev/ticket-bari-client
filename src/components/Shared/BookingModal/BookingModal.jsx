@@ -2,14 +2,15 @@ import { Spinner } from '@/components/ui/spinner';
 import useAuth from '@/hooks/useAuth';
 import useAxios from '@/hooks/useAxios';
 import { useMutation } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
-import { th } from 'zod/v4/locales';
+import SeatMap from '../SeatMap';
 
 const BookingModal = ({ ticket, isOpen, onClose }) => {
+  console.log(ticket);
   const {
     register,
     handleSubmit,
@@ -19,9 +20,19 @@ const BookingModal = ({ ticket, isOpen, onClose }) => {
   } = useForm();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const watchQuantity = useWatch({ control, name: 'quantity' });
-  const totalPrice = watchQuantity * ticket?.price || 0;
   const secureApi = useAxios();
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  let totalPrice = 0;
+  const watchQuantity = useWatch({ control, name: 'quantity' });
+
+  if (ticket?.transportType === 'Bus') {
+    totalPrice = selectedSeats.length * (ticket?.price || 0);
+  } else {
+    totalPrice = (watchQuantity || 0) * (ticket?.price || 0);
+  }
+  const handleSeatSelection = seats => {
+    setSelectedSeats(seats);
+  };
 
   useEffect(() => {
     if (isOpen) reset();
@@ -34,8 +45,8 @@ const BookingModal = ({ ticket, isOpen, onClose }) => {
         const res = await secureApi.post('/bookings', data);
         return res.data;
       } catch (error) {
-        throw error;
         console.log(error);
+        throw error;
       }
     },
     onSuccess: (data, insertedData) => {
@@ -84,20 +95,28 @@ const BookingModal = ({ ticket, isOpen, onClose }) => {
     },
   });
   const { isPending } = insertData;
+  let quantitySet = 0;
   const onSubmit = data => {
+    if (ticket.transportType === 'Bus') {
+      if (!selectedSeats.length) return toast.error('Please Select Seat');
+      quantitySet = selectedSeats.length;
+    } else {
+      quantitySet = parseInt(data.quantity);
+    }
     const bookingData = {
       ticketId: ticket._id,
       ticketTitle: ticket.title,
-      quantity: parseInt(data.quantity),
+      quantity: parseInt(quantitySet),
+      bookedSeat: selectedSeats,
       unitPrice: ticket.price,
-      totalPrice: ticket.price * parseInt(data.quantity),
+      totalPrice: ticket.price * parseInt(quantitySet),
       status: 'pending',
       userName: user.displayName,
       userEmail: user.email,
       vendorEmail: ticket.vendorEmail,
       bookingDate: new Date().toISOString(),
     };
-
+    console.log(bookingData);
     insertData.mutate(bookingData);
   };
 
@@ -125,7 +144,52 @@ const BookingModal = ({ ticket, isOpen, onClose }) => {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="form-control w-full mb-4">
+          {ticket.transportType !== 'Bus' ? (
+            <div className="form-control w-full mb-4">
+              <label className="label">
+                <span className="label-text">How many tickets?</span>
+              </label>
+              <input
+                type="number"
+                min={1}
+                placeholder="Enter quantity"
+                className={`input input-bordered w-full ${
+                  errors.quantity ? 'input-error' : ''
+                }`}
+                {...register('quantity', {
+                  required: 'Quantity is required',
+                  min: { value: 1, message: 'Minimum 1 ticket' },
+                  max: {
+                    value: ticket.quantity,
+                    message: `Only ${ticket.quantity} seats available`,
+                  },
+                })}
+              />
+              {errors.quantity && (
+                <span className="text-error text-sm mt-1">
+                  {errors.quantity.message}
+                </span>
+              )}
+            </div>
+          ) : (
+            <div className="form-control w-full mb-4">
+              <label className="label">
+                <span className="label-text">Select Seat</span>
+              </label>
+              <SeatMap
+                totalSeats={ticket.quantity}
+                bookedSeats={ticket?.bookedSeat}
+                onSelect={handleSeatSelection}
+                selectedSeats={selectedSeats}
+              ></SeatMap>
+              {errors.quantity && (
+                <span className="text-error text-sm mt-1">
+                  {errors.quantity.message}
+                </span>
+              )}
+            </div>
+          )}
+          {/* <div className="form-control w-full mb-4">
             <label className="label">
               <span className="label-text">How many tickets?</span>
             </label>
@@ -150,7 +214,7 @@ const BookingModal = ({ ticket, isOpen, onClose }) => {
                 {errors.quantity.message}
               </span>
             )}
-          </div>
+          </div> */}
           <div className="flex justify-between items-center text-xl font-bold border-t pt-4 mb-6">
             <span>Total Pay:</span>
             <span className="text-primary">${totalPrice}</span>

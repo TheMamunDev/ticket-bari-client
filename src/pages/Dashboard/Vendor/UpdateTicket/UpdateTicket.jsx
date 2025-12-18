@@ -9,6 +9,7 @@ import useTime from '@/hooks/useTime';
 import useAxios from '@/hooks/useAxios';
 import { toast } from 'react-toastify';
 import useImage from '@/hooks/useImage';
+import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
 
 const UpdateTicket = () => {
   const { id } = useParams();
@@ -20,14 +21,17 @@ const UpdateTicket = () => {
     formState: { errors },
     reset,
   } = useForm();
-  const [isLoading, setIsLoading] = useState(true);
 
   const {
-    data: fetchedData,
+    data,
     isLoading: fetchLoading,
     error,
+    isError,
+    refetch,
   } = useFetch(['update-ticket', id], `/tickets/${id}`, true);
   const [isTransition, startTransition] = useTransition();
+
+  const fetchedData = data?.result || [];
 
   const queryClient = useQueryClient();
   const secureApi = useAxios();
@@ -43,9 +47,9 @@ const UpdateTicket = () => {
       }
     },
     onSuccess: (data, postData) => {
-      console.log(data.data, 'from success');
       if (data.data.modifiedCount) {
         toast.success('Ticket Updated Successfull');
+        navigate('/dashboard/vendor/my-tickets');
       }
       queryClient.setQueryData(['my-added-tickets', user?.email], oldData => {
         return oldData.map(el =>
@@ -79,8 +83,9 @@ const UpdateTicket = () => {
     );
   }
   function convertAmPmTo24(timeStr) {
+    if (!timeStr) return '';
     const [time, modifier] = timeStr.split(' ');
-    let [hours, minutes] = time.split(':').map(Number);
+    let [hours, minutes] = time?.split(':').map(Number);
     if (modifier === 'PM' && hours !== 12) {
       hours += 12;
     }
@@ -90,6 +95,31 @@ const UpdateTicket = () => {
     return `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
       .padStart(2, '0')}`;
+  }
+
+  if (isError) {
+    const isNotFound = error?.response?.status === 404;
+    if (isNotFound) {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+          <div className="text-9xl mb-4">🎫</div>
+          <h2 className="text-3xl font-bold text-base-content mb-2">
+            Ticket Not Found
+          </h2>
+          <p className="text-base-content/60 mb-6 max-w-md">
+            There Are No Ticket Available At This Momment , Try Later . Thank
+            You !
+          </p>
+          <Link
+            to="/dashboard/vendor/my-tickets"
+            className="btn btn-primary text-white"
+          >
+            View Added Ticktes
+          </Link>
+        </div>
+      );
+    }
+    return <DataFetchError error={error} refetch={refetch} />;
   }
 
   return (
@@ -203,7 +233,7 @@ const UpdateTicket = () => {
                 <input
                   type="time"
                   className="input input-bordered w-full"
-                  defaultValue={convertAmPmTo24(fetchedData.departureTime)}
+                  defaultValue={convertAmPmTo24(fetchedData?.departureTime)}
                   {...register('departureTime', { required: true })}
                 />
               </div>
@@ -229,7 +259,7 @@ const UpdateTicket = () => {
                     <input
                       type="checkbox"
                       value={perk}
-                      defaultChecked={fetchedData.perks.includes(perk)}
+                      defaultChecked={fetchedData?.perks?.includes(perk)}
                       className="checkbox checkbox-primary checkbox-sm"
                       {...register('perks')}
                     />

@@ -3,18 +3,10 @@ import useAuth from '@/hooks/useAuth';
 import useAxios from '@/hooks/useAxios';
 import useFetch from '@/hooks/useFetch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
-import {
-  FaUserShield,
-  FaStore,
-  FaBan,
-  FaCheckCircle,
-  FaUser,
-  FaTrashAlt,
-} from 'react-icons/fa';
+
+import { FaUserShield, FaStore, FaBan } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
-import { is } from 'zod/v4/locales';
 
 const ManageUsers = () => {
   const { user, loading } = useAuth();
@@ -63,9 +55,8 @@ const ManageUsers = () => {
       }
     },
     onSuccess: (response, data) => {
-      console.log(response, data);
       if (response?.updatedUser.modifiedCount) {
-        toast.success('User Updated As Fraud Successfully');
+        Swal.fire('Marked!', 'Vendor has been marked as Fraud.', 'success');
         queryClient.setQueryData(['all-users'], oldData => {
           console.log('cache data', oldData);
           return oldData.map(el =>
@@ -75,7 +66,7 @@ const ManageUsers = () => {
       }
     },
     onError: error => {
-      console.log('onError:', error);
+      // console.log('onError:', error);
       const message = error?.response?.data?.message || 'Something went wrong';
       toast.error(message, {
         position: 'top-center',
@@ -101,10 +92,6 @@ const ManageUsers = () => {
     }).then(result => {
       if (result.isConfirmed) {
         updateAsFraud.mutate({ user, isFraud: true });
-
-        // const updatedUsers = users.map(u =>
-        //   u.id === user.id ? { ...u, isFraud: true } : u
-        // );
         // Swal.fire('Marked!', 'Vendor has been marked as Fraud.', 'success');
       }
     });
@@ -141,11 +128,11 @@ const ManageUsers = () => {
                   <th>{index + 1}</th>
                   <td>
                     <div className="flex items-center gap-3">
-                      <div className="avatar">
+                      {/* <div className="avatar">
                         <div className="mask mask-squircle w-10 h-10">
                           <img src={user.photo} alt="Avatar" />
                         </div>
-                      </div>
+                      </div> */}
                       <div className="font-bold">{user.name}</div>
                     </div>
                   </td>
