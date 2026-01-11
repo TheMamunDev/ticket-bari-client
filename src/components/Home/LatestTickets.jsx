@@ -9,7 +9,7 @@ import TicketCardSkeleton from '../Shared/Loader/TicketCardSkeleton';
 
 const LatestTickets = () => {
   const {
-    data: latestTickets,
+    data: latestTickets = [],
     isLoading,
     error,
     isError,
@@ -64,7 +64,7 @@ const LatestTickets = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {latestTickets.map(ticket => (
+            {latestTickets?.map(ticket => (
               <TicketCard key={ticket.id} ticket={ticket} />
             ))}
           </div>

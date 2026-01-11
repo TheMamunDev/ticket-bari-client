@@ -23,6 +23,7 @@ const MyBookedTickets = () => {
     `/bookings/${user.email}?page=${page}`,
     true
   );
+
   const handlePageChange = newPage => {
     const params = new URLSearchParams(searchParams);
     params.set('page', newPage);

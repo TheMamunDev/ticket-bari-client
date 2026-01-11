@@ -18,16 +18,18 @@ import useAuth from '@/hooks/useAuth';
 import DataFetchError from '@/components/Shared/DataFetchError/DataFetchError';
 import RelevantTickets from '@/components/Cards/RelevantTickets';
 import { Bus, ChevronRight, Home } from 'lucide-react';
+import Swal from 'sweetalert2';
+import TicketReviews from './TicketReviews';
 
 const TicketDetails = () => {
-  const { loading } = useAuth();
+  const { loading, user } = useAuth();
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data, isLoading, error, isError, refetch } = useFetch(
     ['ticket', id],
-    `/tickets/${id}`,
-    true
+    `/tickets/${id}`
   );
-  const { result: ticket, relevantTickets } = data || {};
+  const { result: ticket, relevantTickets, reviews } = data || {};
   useTitle(`Ticket Details - ${ticket?.title}`);
   const [isExpired, setIsExpired] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,6 +47,20 @@ const TicketDetails = () => {
   if (ticket?.status === 'rejected') buttonText = 'Ticket Rejected';
 
   const handleBookBtn = () => {
+    if (!user)
+      return Swal.fire({
+        title: 'Login Required',
+        text: 'Login or register to book a ticket',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Login/Register',
+      }).then(result => {
+        if (result.isConfirmed) {
+          navigate('/login');
+        }
+      });
     setIsModalOpen(true);
   };
 
@@ -221,6 +237,8 @@ const TicketDetails = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
+      <TicketReviews reviews={reviews}></TicketReviews>
 
       <RelevantTickets relevantTickets={relevantTickets}></RelevantTickets>
     </div>

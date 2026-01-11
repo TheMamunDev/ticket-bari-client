@@ -142,6 +142,12 @@ const DashboardLayout = () => {
             label="Advertise Tickets"
             toolTip="Advertise Tickets"
           />
+          <LinkItem
+            to="/dashboard/admin/reviews"
+            icon={FaBell}
+            label="Manage Reviews"
+            toolTip="Manage Reviews"
+          />
         </>
       );
     }

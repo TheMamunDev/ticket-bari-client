@@ -27,12 +27,13 @@ import AdvertiesTickets from '@/pages/Dashboard/Admin/AdvertiesTickets/Adverties
 import ErrorPage from '@/pages/ErrorPage/ErrorPage';
 import About from '@/pages/About/About';
 import Contact from '@/pages/Contact/Contact';
+import ManageReviews from '@/pages/Dashboard/Admin/ManageReviews/ManageReviews';
 export const Router = createBrowserRouter([
   {
     path: '/',
     Component: Root,
     errorElement: <ErrorPage></ErrorPage>,
-    
+
     children: [
       {
         path: '/',
@@ -61,11 +62,7 @@ export const Router = createBrowserRouter([
       },
       {
         path: 'ticket/:id',
-        element: (
-          <ProtectedRoute>
-            <TicketDetails></TicketDetails>
-          </ProtectedRoute>
-        ),
+        element: <TicketDetails></TicketDetails>,
       },
     ],
   },
@@ -115,6 +112,14 @@ export const Router = createBrowserRouter([
         element: (
           <AdminRoute>
             <AdvertiesTickets></AdvertiesTickets>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: 'admin/reviews',
+        element: (
+          <AdminRoute>
+            <ManageReviews></ManageReviews>
           </AdminRoute>
         ),
       },

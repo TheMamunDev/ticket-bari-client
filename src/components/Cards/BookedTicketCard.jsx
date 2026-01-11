@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import useAxios from '@/hooks/useAxios';
+import ReviewModal from '../Shared/ReviewModal/ReviewModal';
 
 const BookedTicketCard = ({ booking, onPay }) => {
   const [searchParams] = useSearchParams();
@@ -37,8 +38,6 @@ const BookedTicketCard = ({ booking, onPay }) => {
   const handleTimerExpire = status => {
     setIsExpired(status);
   };
-
-  console.log(booking.userEmail);
 
   const deleteTicket = useMutation({
     mutationFn: async id => {
@@ -103,7 +102,7 @@ const BookedTicketCard = ({ booking, onPay }) => {
         </div>
       </figure>
 
-      <div className="card-body p-5 flex-grow">
+      <div className="card-body p-5 flex flex-col flex-grow">
         <Link
           to={`/ticket/${booking.ticketId}`}
           className="card-title text-lg leading-tight mb-2"
@@ -153,8 +152,15 @@ const BookedTicketCard = ({ booking, onPay }) => {
           </div>
         )}
         {booking.status === 'paid' && (
-          <div className="alert alert-success text-white py-2 text-xs mb-4">
-            <span>Payment Completed! Have a safe trip.</span>
+          <div className="card-actions mt-auto flex flex-col md:flex-row justify-end  gap-2">
+            <div className="flex-1 w-full">
+              <span className="alert alert-success text-white py-2 text-xs">
+                Payment Completed!
+              </span>
+            </div>
+            <div className="flex-1 w-full">
+              <ReviewModal trip={booking} />
+            </div>
           </div>
         )}
         {booking.status === 'rejected' && (

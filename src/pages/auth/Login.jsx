@@ -19,8 +19,10 @@ export default function Login() {
       navigate(from, { replace: true });
     }
   }, [user, navigate, from]);
+
   const {
     register,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm();
@@ -99,10 +101,64 @@ export default function Login() {
               </label>
             </div>
 
-            <div className="flex justify-between items-center text-sm">
+            <div className="flex flex-col text-sm">
               <Link to="/forgot" className="link link-hover link-primary">
                 Forgot password?
               </Link>
+              <p className="label-text-alt text-primary hover:underline text-sm transition-colors ">
+                Click here to auto fill credentials
+              </p>
+              <div className="flex gap-3 items-center justify-start my-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setValue('email', 'admin@ticketbari.com', {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    });
+                    setValue('pass', 'Admin123', {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    });
+                  }}
+                  className="btn btn-sm btn-primary"
+                >
+                  Admin
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setValue('email', 'vendor@ticketbari.com', {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    });
+                    setValue('pass', 'Vendor123', {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    });
+                  }}
+                  className="btn btn-sm btn-accent text-white"
+                >
+                  Vendor
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setValue('email', 'user@user.com', {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    });
+                    setValue('pass', 'User12345', {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    });
+                  }}
+                  className="btn btn-sm btn-info text-white"
+                >
+                  User
+                </button>
+              </div>
             </div>
 
             <button
